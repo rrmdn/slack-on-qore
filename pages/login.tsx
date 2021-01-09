@@ -4,7 +4,7 @@ import { css } from "@emotion/css";
 import { Button, Card, Form, Input, message, Space, Typography } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { client } from "../qoreConfig";
+import { client } from "../qoreContext";
 import Link from "next/link";
 
 export default function Login() {

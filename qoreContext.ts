@@ -10,8 +10,11 @@ export const client = new QoreClient<ProjectSchema>({
   onError: (error) => {
     switch (error.message) {
       case "Request failed with status code 401":
-        if (window.location.pathname !== "/login") {
-          // window.location.href = "/login";
+        if (
+          window.location.pathname !== "/login" &&
+          process.env.NODE_ENV === "production"
+        ) {
+          window.location.href = "/login";
         }
         break;
 

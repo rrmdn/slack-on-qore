@@ -20,7 +20,7 @@ import {
   PlusOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import qoreContext, { client } from "../qoreConfig";
+import qoreContext, { client } from "../qoreContext";
 import dayjs from "../dayjs";
 import { Controller, useForm } from "react-hook-form";
 import { ProjectSchema } from "@feedloop/qore-client";
