@@ -223,7 +223,7 @@ export default function Home() {
     activeKey?: string;
     search: string;
   }>({ search: "" });
-  const joinedChannels = qoreContext.views.channelsOfMember.useListRow({
+  const joinedChannels = qoreContext.views.myChannels.useListRow({
     search: state.search,
     memberID: currentUser?.id,
     limit: currentUser?.id ? undefined : 0, // skip fetching

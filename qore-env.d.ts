@@ -264,7 +264,7 @@ declare module "@feedloop/qore-client" {
     actions: {};
   };
 
-  type MemberDefaultViewXViewRow = {
+  type MemberDefaultViewViewRow = {
     read: {
       id: string;
       email: string;
@@ -297,6 +297,6 @@ declare module "@feedloop/qore-client" {
     privateChannels: PrivateChannelsViewRow;
     channelsExcludingMember: ChannelsExcludingMemberViewRow;
     myChannels: MyChannelsViewRow;
-    memberDefaultViewX: MemberDefaultViewXViewRow;
+    memberDefaultView: MemberDefaultViewViewRow;
   }
 }

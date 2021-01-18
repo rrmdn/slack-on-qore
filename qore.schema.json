@@ -253,7 +253,7 @@
           "select": true,
           "update": false,
           "delete": false,
-          "viewId": "memberDefaultViewX"
+          "viewId": "memberDefaultView"
         },
         {
           "insert": false,
@@ -1022,8 +1022,8 @@
       "design": null
     },
     {
-      "id": "memberDefaultViewX",
-      "name": "member Default View X",
+      "id": "memberDefaultView",
+      "name": "member Default View",
       "tableId": "member",
       "parameters": [{ "slug": "search", "type": "text", "required": false }],
       "sorts": [],
