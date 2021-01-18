@@ -132,7 +132,7 @@
           "deletionProtection": false,
           "defaultValue": null,
           "id": "message",
-          "displayField": false
+          "displayField": true
         },
         {
           "name": "attachment",
@@ -208,7 +208,7 @@
           "deletionProtection": false,
           "defaultValue": null,
           "id": "lastReadAt",
-          "displayField": false
+          "displayField": true
         }
       ]
     }
@@ -373,7 +373,7 @@
           "deletionProtection": false,
           "defaultValue": null,
           "id": "message",
-          "displayField": false,
+          "displayField": true,
           "design": null
         },
         {
@@ -435,7 +435,7 @@
           "deletionProtection": false,
           "defaultValue": null,
           "id": "message",
-          "displayField": false,
+          "displayField": true,
           "design": null
         },
         {
