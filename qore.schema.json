@@ -208,7 +208,7 @@
           "deletionProtection": false,
           "defaultValue": null,
           "id": "lastReadAt",
-          "displayField": false
+          "displayField": true
         }
       ]
     }
