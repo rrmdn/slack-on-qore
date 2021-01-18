@@ -223,26 +223,9 @@ export default function Home() {
     activeKey?: string;
     search: string;
   }>({ search: "" });
-  const joinedChannels = qoreContext.views.myChannels.useListRow({
-    search: state.search,
-    memberID: currentUser?.id,
-    limit: currentUser?.id ? undefined : 0, // skip fetching
-  });
-  const privateChannels = qoreContext.views.privateChannels.useListRow({
-    memberID: currentUser?.id,
+  const joinedChannels = qoreContext.views.channelDefaultView.useListRow({
     search: state.search,
     limit: currentUser?.id ? undefined : 0, // skip fetching
-  });
-  const otherChannels = qoreContext.views.channelsExcludingMember.useListRow({
-    memberID: currentUser?.id,
-    limit: currentUser?.id ? undefined : 0, // skip fetching
-  });
-  const joinedChannelsSet = React.useMemo(() => {
-    return new Set(joinedChannels.data.map((channel) => channel.id));
-  }, [joinedChannels.data]);
-  const members = qoreContext.views.memberDefaultView.useListRow({
-    search: state.search,
-    limit: state.search ? undefined : 0,
   });
   const {
     insertRow,
@@ -338,8 +321,6 @@ export default function Home() {
                 })
               );
               joinedChannels.revalidate();
-              otherChannels.revalidate();
-              privateChannels.revalidate();
             }}
           >
             {state.search && (
@@ -358,27 +339,6 @@ export default function Home() {
             {joinedChannels.data.map((channel) => (
               <Menu.Item key={channel.id} icon={<NumberOutlined />}>
                 {channel.name}
-              </Menu.Item>
-            ))}
-            {privateChannels.data.map((channel) => (
-              <Menu.Item key={channel.id} icon={<UserOutlined />}>
-                {
-                  channel.member1.nodes.find(
-                    (member) => member.id !== currentUser?.id
-                  )?.displayField
-                }
-              </Menu.Item>
-            ))}
-            {otherChannels.data
-              .filter((channel) => !joinedChannelsSet.has(channel.id))
-              .map((channel) => (
-                <Menu.Item key={"other" + channel.id} icon={<NumberOutlined />}>
-                  {`Join "${channel.name}"`}
-                </Menu.Item>
-              ))}
-            {members.data.map((member) => (
-              <Menu.Item key={"private" + member.id} icon={<UserOutlined />}>
-                {`DM "${member.email}"`}
               </Menu.Item>
             ))}
           </Menu>
