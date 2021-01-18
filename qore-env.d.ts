@@ -11,6 +11,7 @@ declare module "@feedloop/qore-client" {
     password: string;
     messages1: { nodes: Messages1TableRow[] };
     channels: { nodes: ChannelsTableRow[] };
+    memberLastRead: { nodes: MemberLastReadTableRow[] };
   };
 
   type ChannelTableRow = {
@@ -19,6 +20,7 @@ declare module "@feedloop/qore-client" {
     messages: { nodes: MessagesTableRow[] };
     member1: { nodes: Member1TableRow[] };
     type: "channel" | "private";
+    memberLastRead1: { nodes: MemberLastRead1TableRow[] };
   };
 
   type MessagesTableRow = {
@@ -30,41 +32,11 @@ declare module "@feedloop/qore-client" {
     createdAt: Date;
   };
 
-  type MemberDefaultViewViewRow = {
-    read: {
-      id: string;
-      email: string;
-      role: { id: string; displayField: string };
-      password: string;
-      messages1: { nodes: Messages1TableRow[] };
-      channels: { nodes: ChannelsTableRow[] };
-    };
-    write: {
-      email: string;
-      password: string;
-      messages1: string[];
-      channels: string[];
-    };
-    params: {};
-    actions: {};
-  };
-
-  type ChannelDefaultViewViewRow = {
-    read: {
-      id: string;
-      name: string;
-      messages: { nodes: MessagesTableRow[] };
-      member1: { nodes: Member1TableRow[] };
-      type: "channel" | "private";
-    };
-    write: {
-      name: string;
-      messages: string[];
-      member1: string[];
-      type: "channel" | "private";
-    };
-    params: {};
-    actions: {};
+  type MemberLastReadTableRow = {
+    id: string;
+    member: MemberTableRow;
+    channel: ChannelTableRow;
+    lastReadAt: Date;
   };
 
   type MessagesDefaultViewViewRow = {
@@ -129,11 +101,202 @@ declare module "@feedloop/qore-client" {
     actions: {};
   };
 
+  type MemberLastReadDefaultViewViewRow = {
+    read: {
+      id: string;
+      member: MemberTableRow;
+      channel: ChannelTableRow;
+      lastReadAt: Date;
+    };
+    write: {
+      member: string[];
+      channel: string[];
+      lastReadAt: Date;
+    };
+    params: {};
+    actions: {};
+  };
+
+  type ChannelDefaultViewViewRow = {
+    read: {
+      id: string;
+      name: string;
+      messages: { nodes: MessagesTableRow[] };
+      member1: { nodes: Member1TableRow[] };
+      type: "channel" | "private";
+    };
+    write: {
+      name: string;
+      messages: string[];
+      member1: string[];
+      type: "channel" | "private";
+    };
+    params: {
+      search?: string;
+    };
+    actions: {};
+  };
+
+  type CurrentMemberLastReadViewRow = {
+    read: {
+      id: string;
+      member: MemberTableRow;
+      channel: ChannelTableRow;
+      lastReadAt: Date;
+    };
+    write: {
+      member: string[];
+      channel: string[];
+      lastReadAt: Date;
+    };
+    params: {};
+    actions: {};
+  };
+
+  type LastReadChannelViewRow = {
+    read: {
+      id: string;
+      name: string;
+      messages: { nodes: MessagesTableRow[] };
+      member1: { nodes: Member1TableRow[] };
+      type: "channel" | "private";
+      memberLastRead1: { nodes: MemberLastRead1TableRow[] };
+    };
+    write: {
+      name: string;
+      messages: string[];
+      member1: string[];
+      type: "channel" | "private";
+      memberLastRead1: string[];
+    };
+    params: {};
+    actions: {};
+  };
+
+  type PublicMembersViewRow = {
+    read: {
+      id: string;
+      email: string;
+      role: { id: string; displayField: string };
+      password: string;
+      messages1: { nodes: Messages1TableRow[] };
+      channels: { nodes: ChannelsTableRow[] };
+      memberLastRead: { nodes: MemberLastReadTableRow[] };
+    };
+    write: {
+      email: string;
+      password: string;
+      messages1: string[];
+      channels: string[];
+      memberLastRead: string[];
+    };
+    params: {
+      search?: string;
+    };
+    actions: {};
+  };
+
+  type PrivateChannelsViewRow = {
+    read: {
+      id: string;
+      name: string;
+      messages: { nodes: MessagesTableRow[] };
+      member1: { nodes: Member1TableRow[] };
+      type: "channel" | "private";
+      memberLastRead1: { nodes: MemberLastRead1TableRow[] };
+    };
+    write: {
+      name: string;
+      messages: string[];
+      member1: string[];
+      type: "channel" | "private";
+      memberLastRead1: string[];
+    };
+    params: {
+      memberID?: string;
+      search?: string;
+    };
+    actions: {};
+  };
+
+  type ChannelsExcludingMemberViewRow = {
+    read: {
+      id: string;
+      name: string;
+      messages: { nodes: MessagesTableRow[] };
+      member1: { nodes: Member1TableRow[] };
+      type: "channel" | "private";
+      memberLastRead1: { nodes: MemberLastRead1TableRow[] };
+    };
+    write: {
+      name: string;
+      messages: string[];
+      member1: string[];
+      type: "channel" | "private";
+      memberLastRead1: string[];
+    };
+    params: {
+      memberID?: string;
+    };
+    actions: {};
+  };
+
+  type MyChannelsViewRow = {
+    read: {
+      id: string;
+      name: string;
+      messages: { nodes: MessagesTableRow[] };
+      member1: { nodes: Member1TableRow[] };
+      type: "channel" | "private";
+      memberLastRead1: { nodes: MemberLastRead1TableRow[] };
+    };
+    write: {
+      name: string;
+      messages: string[];
+      member1: string[];
+      type: "channel" | "private";
+      memberLastRead1: string[];
+    };
+    params: {
+      memberID?: string;
+      search?: string;
+    };
+    actions: {};
+  };
+
+  type MemberDefaultViewXViewRow = {
+    read: {
+      id: string;
+      email: string;
+      role: { id: string; displayField: string };
+      password: string;
+      messages1: { nodes: Messages1TableRow[] };
+      channels: { nodes: ChannelsTableRow[] };
+    };
+    write: {
+      email: string;
+      password: string;
+      messages1: string[];
+      channels: string[];
+    };
+    params: {
+      search?: string;
+    };
+    actions: {};
+  };
+
   interface ProjectSchema extends QoreSchema {
-    memberDefaultView: MemberDefaultViewViewRow;
-    channelDefaultView: ChannelDefaultViewViewRow;
     messagesDefaultView: MessagesDefaultViewViewRow;
     channelMessages: ChannelMessagesViewRow;
     currentMember: CurrentMemberViewRow;
+    memberLastReadDefaultView: MemberLastReadDefaultViewViewRow;
+    channelDefaultView: ChannelDefaultViewViewRow;
+    currentMemberLastRead: CurrentMemberLastReadViewRow;
+    lastReadChannel: LastReadChannelViewRow;
+    publicMembers: PublicMembersViewRow;
+    privateChannels: PrivateChannelsViewRow;
+    channelsExcludingMember: ChannelsExcludingMemberViewRow;
+    myChannels: MyChannelsViewRow;
+    memberDefaultViewX: MemberDefaultViewXViewRow;
   }
 }

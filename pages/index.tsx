@@ -13,6 +13,7 @@ import {
   Avatar,
   Tag,
   Popconfirm,
+  message,
 } from "antd";
 import {
   LoadingOutlined,
@@ -218,16 +219,36 @@ const ChannelMessages = (props: { id: string }) => {
 
 export default function Home() {
   const currentUser = useCurrentUser();
-  const channels = qoreContext.views.channelDefaultView.useListRow();
+  const [state, setState] = React.useState<{
+    activeKey?: string;
+    search: string;
+  }>({ search: "" });
+  const joinedChannels = qoreContext.views.channelsOfMember.useListRow({
+    search: state.search,
+    memberID: currentUser?.id,
+    limit: currentUser?.id ? undefined : 0, // skip fetching
+  });
+  const privateChannels = qoreContext.views.privateChannels.useListRow({
+    memberID: currentUser?.id,
+    search: state.search,
+    limit: currentUser?.id ? undefined : 0, // skip fetching
+  });
+  const otherChannels = qoreContext.views.channelsExcludingMember.useListRow({
+    memberID: currentUser?.id,
+    limit: currentUser?.id ? undefined : 0, // skip fetching
+  });
+  const joinedChannelsSet = React.useMemo(() => {
+    return new Set(joinedChannels.data.map((channel) => channel.id));
+  }, [joinedChannels.data]);
+  const members = qoreContext.views.memberDefaultView.useListRow({
+    search: state.search,
+    limit: state.search ? undefined : 0,
+  });
   const {
     insertRow,
     status,
   } = qoreContext.views.channelDefaultView.useInsertRow();
 
-  const [state, setState] = React.useState<{
-    activeKey?: string;
-    search: string;
-  }>({ search: "" });
   const handleSearch = React.useCallback((search: string) => {
     setState((state) =>
       produce(state, (draft) => {
@@ -235,14 +256,7 @@ export default function Home() {
       })
     );
   }, []);
-  const filteredChannels = React.useMemo(() => {
-    if (state.search.length) {
-      return channels.data.filter((channel) =>
-        channel.name.startsWith(state.search)
-      );
-    }
-    return channels.data;
-  }, [state.search, channels.data]);
+
   return (
     <Card
       className={css`
@@ -281,28 +295,51 @@ export default function Home() {
             <Input.Search onSearch={handleSearch} placeholder="Search or add" />
           </div>
           <Menu
+            activeKey={state.activeKey}
             onSelect={async (e) => {
+              let channelID = `${e.key}`;
               if (e.key === "item_0") {
                 if (!currentUser || status === "loading") return;
+                const done = message.loading(`Creating channel`);
                 const newChannel = await insertRow({
                   name: state.search,
                   member1: [currentUser.id],
                   type: "channel",
                 });
-                setState((state) =>
-                  produce(state, (draft) => {
-                    draft.activeKey = newChannel.id;
-                    draft.search = "";
-                  })
-                );
-                channels.revalidate();
-                return;
+                channelID = newChannel.id;
+                done();
               }
+              if (`${e.key}`.startsWith("other")) {
+                channelID = (e.key as string).replace("other", "");
+                if (!currentUser?.id) return;
+                const done = message.loading(`Joining channel`);
+                await client.views.channelDefaultView.addRelation(channelID, {
+                  member1: [currentUser?.id],
+                });
+                done();
+              }
+              if (`${e.key}`.startsWith("private")) {
+                const memberID = (e.key as string).replace("private", "");
+                if (!currentUser?.id) return;
+                const done = message.loading(`Initiating DM`);
+                const newChannel = await insertRow({
+                  name: "",
+                  member1: [currentUser.id, memberID],
+                  type: "private",
+                });
+                channelID = newChannel.id;
+                done();
+              }
+
               setState((state) =>
                 produce(state, (draft) => {
-                  draft.activeKey = e.key as string;
+                  draft.activeKey = channelID;
+                  draft.search = "";
                 })
               );
+              joinedChannels.revalidate();
+              otherChannels.revalidate();
+              privateChannels.revalidate();
             }}
           >
             {state.search && (
@@ -318,18 +355,30 @@ export default function Home() {
                 New channel "{state.search}"
               </Menu.Item>
             )}
-            {filteredChannels.map((channel) => (
-              <Menu.Item
-                icon={
-                  channel.type === "channel" ? (
-                    <NumberOutlined />
-                  ) : (
-                    <UserOutlined />
-                  )
-                }
-                key={channel.id}
-              >
+            {joinedChannels.data.map((channel) => (
+              <Menu.Item key={channel.id} icon={<NumberOutlined />}>
                 {channel.name}
+              </Menu.Item>
+            ))}
+            {privateChannels.data.map((channel) => (
+              <Menu.Item key={channel.id} icon={<UserOutlined />}>
+                {
+                  channel.member1.nodes.find(
+                    (member) => member.id !== currentUser?.id
+                  )?.displayField
+                }
+              </Menu.Item>
+            ))}
+            {otherChannels.data
+              .filter((channel) => !joinedChannelsSet.has(channel.id))
+              .map((channel) => (
+                <Menu.Item key={"other" + channel.id} icon={<NumberOutlined />}>
+                  {`Join "${channel.name}"`}
+                </Menu.Item>
+              ))}
+            {members.data.map((member) => (
+              <Menu.Item key={"private" + member.id} icon={<UserOutlined />}>
+                {`DM "${member.email}"`}
               </Menu.Item>
             ))}
           </Menu>

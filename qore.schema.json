@@ -10,6 +10,7 @@
           "name": "email",
           "type": "text",
           "deletionProtection": true,
+          "defaultValue": null,
           "id": "email",
           "displayField": true
         },
@@ -17,6 +18,7 @@
           "name": "role",
           "type": "role",
           "deletionProtection": true,
+          "defaultValue": null,
           "id": "role",
           "displayField": false
         },
@@ -31,6 +33,7 @@
           "name": "Messages 1",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "messages1",
           "table": "messages",
           "column": "from",
@@ -41,9 +44,21 @@
           "name": "channels",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "channels",
           "table": "channel",
           "column": "member1",
+          "multiple": true,
+          "displayField": false
+        },
+        {
+          "name": "Member last read",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "memberLastRead",
+          "table": "memberLastRead",
+          "column": "member",
           "multiple": true,
           "displayField": false
         }
@@ -58,6 +73,7 @@
           "name": "name",
           "type": "text",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "name",
           "displayField": true
         },
@@ -65,6 +81,7 @@
           "name": "Messages",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "messages",
           "table": "messages",
           "column": "channel",
@@ -75,6 +92,7 @@
           "name": "member 1",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "member1",
           "table": "member",
           "column": "channels",
@@ -85,8 +103,20 @@
           "name": "type",
           "type": "select",
           "deletionProtection": false,
+          "defaultValue": "channel",
           "id": "type",
           "select": ["channel", "private"],
+          "displayField": false
+        },
+        {
+          "name": "Member last read 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "memberLastRead1",
+          "table": "memberLastRead",
+          "column": "channel",
+          "multiple": true,
           "displayField": false
         }
       ]
@@ -100,6 +130,7 @@
           "name": "message",
           "type": "text",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "message",
           "displayField": false
         },
@@ -107,6 +138,7 @@
           "name": "attachment",
           "type": "file",
           "deletionProtection": false,
+          "defaultValue": null,
           "fileType": "image",
           "id": "attachment",
           "displayField": false
@@ -115,6 +147,7 @@
           "name": "channel",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "channel",
           "table": "channel",
           "column": "messages",
@@ -125,6 +158,7 @@
           "name": "from",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "from",
           "table": "member",
           "column": "messages1",
@@ -135,7 +169,45 @@
           "name": "createdAt",
           "type": "date",
           "deletionProtection": false,
+          "defaultValue": "now()",
           "id": "createdAt",
+          "displayField": false
+        }
+      ]
+    },
+    {
+      "name": "Member last read",
+      "type": null,
+      "id": "memberLastRead",
+      "fields": [
+        {
+          "name": "member",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "member",
+          "table": "member",
+          "column": "memberLastRead",
+          "multiple": false,
+          "displayField": false
+        },
+        {
+          "name": "channel",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "channel",
+          "table": "channel",
+          "column": "memberLastRead1",
+          "multiple": false,
+          "displayField": false
+        },
+        {
+          "name": "last read at",
+          "type": "date",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "lastReadAt",
           "displayField": false
         }
       ]
@@ -143,31 +215,17 @@
   ],
   "roles": [
     {
-      "name": "admin",
-      "isAdmin": true,
-      "isEditor": false,
-      "isPublic": false,
-      "permissions": []
-    },
-    {
-      "name": "public",
-      "isAdmin": false,
-      "isEditor": false,
-      "isPublic": true,
-      "permissions": []
-    },
-    {
       "name": "participant",
       "isAdmin": false,
       "isEditor": false,
       "isPublic": false,
       "permissions": [
         {
-          "insert": true,
+          "insert": false,
           "select": true,
-          "update": true,
+          "update": false,
           "delete": false,
-          "viewId": "channelDefaultView"
+          "viewId": "messagesDefaultView"
         },
         {
           "insert": true,
@@ -179,134 +237,129 @@
         {
           "insert": false,
           "select": true,
-          "update": false,
-          "delete": false,
-          "viewId": "messagesDefaultView"
-        },
-        {
-          "insert": false,
-          "select": true,
-          "update": false,
-          "delete": false,
-          "viewId": "memberDefaultView"
-        },
-        {
-          "insert": false,
-          "select": true,
           "update": true,
           "delete": false,
           "viewId": "currentMember"
+        },
+        {
+          "insert": true,
+          "select": true,
+          "update": true,
+          "delete": false,
+          "viewId": "channelDefaultView"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "memberDefaultViewX"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "lastReadChannel"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "myChannels"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "channelsExcludingMember"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "privateChannels"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "memberLastReadDefaultView"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "currentMemberLastRead"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "publicMembers"
         }
+      ]
+    },
+    {
+      "name": "public",
+      "isAdmin": false,
+      "isEditor": false,
+      "isPublic": true,
+      "permissions": []
+    },
+    {
+      "name": "admin",
+      "isAdmin": true,
+      "isEditor": false,
+      "isPublic": false,
+      "permissions": []
+    }
+  ],
+  "forms": [
+    {
+      "name": "new form Jwg1",
+      "id": "newFormJwg1",
+      "tableId": "member",
+      "fields": [
+        { "id": "email" },
+        { "id": "role" },
+        { "id": "password" },
+        { "id": "messages1" },
+        { "id": "channels" },
+        { "id": "memberLastRead" }
+      ]
+    },
+    {
+      "name": "dfgdfgfdgdfg",
+      "id": "dfgdfgfdgdfg",
+      "tableId": "member",
+      "fields": [
+        { "id": "email" },
+        { "id": "role" },
+        { "id": "password" },
+        { "id": "messages1" },
+        { "id": "channels" },
+        { "id": "memberLastRead" }
+      ]
+    },
+    {
+      "name": "Register Form",
+      "id": "registerForm",
+      "tableId": "member",
+      "fields": [
+        { "hidden": true, "required": false, "id": "role" },
+        { "required": true, "id": "password" },
+        { "required": true, "id": "email" }
       ]
     }
   ],
-  "forms": [],
   "views": [
-    {
-      "id": "memberDefaultView",
-      "name": "member Default View",
-      "tableId": "member",
-      "parameters": [],
-      "sorts": [],
-      "fields": [
-        {
-          "name": "email",
-          "type": "text",
-          "deletionProtection": true,
-          "id": "email",
-          "displayField": true,
-          "design": null
-        },
-        {
-          "name": "role",
-          "type": "role",
-          "deletionProtection": true,
-          "id": "role",
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "password",
-          "type": "password",
-          "deletionProtection": false,
-          "id": "password",
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "Messages 1",
-          "type": "relation",
-          "deletionProtection": false,
-          "id": "messages1",
-          "table": "messages",
-          "column": "from",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "channels",
-          "type": "relation",
-          "deletionProtection": false,
-          "id": "channels",
-          "table": "channel",
-          "column": "member1",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        }
-      ],
-      "design": null
-    },
-    {
-      "id": "channelDefaultView",
-      "name": "channel Default View",
-      "tableId": "channel",
-      "parameters": [],
-      "sorts": [],
-      "fields": [
-        {
-          "name": "name",
-          "type": "text",
-          "deletionProtection": false,
-          "id": "name",
-          "displayField": true,
-          "design": null
-        },
-        {
-          "name": "Messages",
-          "type": "relation",
-          "deletionProtection": false,
-          "id": "messages",
-          "table": "messages",
-          "column": "channel",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "member 1",
-          "type": "relation",
-          "deletionProtection": false,
-          "id": "member1",
-          "table": "member",
-          "column": "channels",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "type",
-          "type": "select",
-          "deletionProtection": false,
-          "id": "type",
-          "select": ["channel", "private"],
-          "displayField": false,
-          "design": null
-        }
-      ],
-      "design": null
-    },
     {
       "id": "messagesDefaultView",
       "name": "Messages Default View",
@@ -318,6 +371,7 @@
           "name": "message",
           "type": "text",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "message",
           "displayField": false,
           "design": null
@@ -326,6 +380,7 @@
           "name": "attachment",
           "type": "file",
           "deletionProtection": false,
+          "defaultValue": null,
           "fileType": "image",
           "id": "attachment",
           "displayField": false,
@@ -335,6 +390,7 @@
           "name": "channel",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "channel",
           "table": "channel",
           "column": "messages",
@@ -346,6 +402,7 @@
           "name": "from",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "from",
           "table": "member",
           "column": "messages1",
@@ -357,6 +414,7 @@
           "name": "createdAt",
           "type": "date",
           "deletionProtection": false,
+          "defaultValue": "now()",
           "id": "createdAt",
           "displayField": false,
           "design": null
@@ -375,6 +433,7 @@
           "name": "message",
           "type": "text",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "message",
           "displayField": false,
           "design": null
@@ -383,6 +442,7 @@
           "name": "attachment",
           "type": "file",
           "deletionProtection": false,
+          "defaultValue": null,
           "fileType": "image",
           "id": "attachment",
           "displayField": false,
@@ -392,6 +452,7 @@
           "name": "channel",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "channel",
           "table": "channel",
           "column": "messages",
@@ -403,6 +464,7 @@
           "name": "from",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "from",
           "table": "member",
           "column": "messages1",
@@ -414,6 +476,7 @@
           "name": "createdAt",
           "type": "date",
           "deletionProtection": false,
+          "defaultValue": "now()",
           "id": "createdAt",
           "displayField": false,
           "design": null
@@ -432,6 +495,7 @@
           "name": "email",
           "type": "text",
           "deletionProtection": true,
+          "defaultValue": null,
           "id": "email",
           "displayField": true,
           "design": null
@@ -440,6 +504,7 @@
           "name": "role",
           "type": "role",
           "deletionProtection": true,
+          "defaultValue": null,
           "id": "role",
           "displayField": false,
           "design": null
@@ -456,6 +521,7 @@
           "name": "Messages 1",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
           "id": "messages1",
           "table": "messages",
           "column": "from",
@@ -467,6 +533,544 @@
           "name": "channels",
           "type": "relation",
           "deletionProtection": false,
+          "defaultValue": null,
+          "id": "channels",
+          "table": "channel",
+          "column": "member1",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null
+    },
+    {
+      "id": "memberLastReadDefaultView",
+      "name": "Member last read Default View",
+      "tableId": "memberLastRead",
+      "parameters": [],
+      "sorts": [],
+      "fields": [
+        {
+          "name": "member",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "member",
+          "table": "member",
+          "column": "memberLastRead",
+          "multiple": false,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "channel",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "channel",
+          "table": "channel",
+          "column": "memberLastRead1",
+          "multiple": false,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "last read at",
+          "type": "date",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "lastReadAt",
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null
+    },
+    {
+      "id": "channelDefaultView",
+      "name": "channel Default View",
+      "tableId": "channel",
+      "parameters": [{ "slug": "search", "type": "text", "required": false }],
+      "sorts": [],
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "name",
+          "displayField": true,
+          "design": null
+        },
+        {
+          "name": "Messages",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "messages",
+          "table": "messages",
+          "column": "channel",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "member 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "member1",
+          "table": "member",
+          "column": "channels",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "type",
+          "type": "select",
+          "deletionProtection": false,
+          "defaultValue": "channel",
+          "id": "type",
+          "select": ["channel", "private"],
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null
+    },
+    {
+      "id": "currentMemberLastRead",
+      "name": "Current member last read",
+      "tableId": "memberLastRead",
+      "parameters": [],
+      "sorts": [],
+      "fields": [
+        {
+          "name": "member",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "member",
+          "table": "member",
+          "column": "memberLastRead",
+          "multiple": false,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "channel",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "channel",
+          "table": "channel",
+          "column": "memberLastRead1",
+          "multiple": false,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "last read at",
+          "type": "date",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "lastReadAt",
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null
+    },
+    {
+      "id": "lastReadChannel",
+      "name": "Last read channel",
+      "tableId": "channel",
+      "parameters": [],
+      "sorts": [],
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "name",
+          "displayField": true,
+          "design": null
+        },
+        {
+          "name": "Messages",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "messages",
+          "table": "messages",
+          "column": "channel",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "member 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "member1",
+          "table": "member",
+          "column": "channels",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "type",
+          "type": "select",
+          "deletionProtection": false,
+          "defaultValue": "channel",
+          "id": "type",
+          "select": ["channel", "private"],
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "Member last read 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "memberLastRead1",
+          "table": "memberLastRead",
+          "column": "channel",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null
+    },
+    {
+      "id": "publicMembers",
+      "name": "Public members",
+      "tableId": "member",
+      "parameters": [{ "slug": "search", "type": "text", "required": false }],
+      "sorts": [],
+      "fields": [
+        {
+          "name": "email",
+          "type": "text",
+          "deletionProtection": true,
+          "defaultValue": null,
+          "id": "email",
+          "displayField": true,
+          "design": null
+        },
+        {
+          "name": "role",
+          "type": "role",
+          "deletionProtection": true,
+          "defaultValue": null,
+          "id": "role",
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "password",
+          "type": "password",
+          "deletionProtection": false,
+          "id": "password",
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "Messages 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "messages1",
+          "table": "messages",
+          "column": "from",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "channels",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "channels",
+          "table": "channel",
+          "column": "member1",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "Member last read",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "memberLastRead",
+          "table": "memberLastRead",
+          "column": "member",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null
+    },
+    {
+      "id": "privateChannels",
+      "name": "Private channels",
+      "tableId": "channel",
+      "parameters": [
+        { "slug": "memberID", "type": "text", "required": false },
+        { "slug": "search", "type": "text", "required": false }
+      ],
+      "sorts": [],
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "name",
+          "displayField": true,
+          "design": null
+        },
+        {
+          "name": "Messages",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "messages",
+          "table": "messages",
+          "column": "channel",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "member 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "member1",
+          "table": "member",
+          "column": "channels",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "type",
+          "type": "select",
+          "deletionProtection": false,
+          "defaultValue": "channel",
+          "id": "type",
+          "select": ["channel", "private"],
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "Member last read 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "memberLastRead1",
+          "table": "memberLastRead",
+          "column": "channel",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null
+    },
+    {
+      "id": "channelsExcludingMember",
+      "name": "Channels excluding member",
+      "tableId": "channel",
+      "parameters": [{ "slug": "memberID", "type": "text", "required": false }],
+      "sorts": [],
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "name",
+          "displayField": true,
+          "design": null
+        },
+        {
+          "name": "Messages",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "messages",
+          "table": "messages",
+          "column": "channel",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "member 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "member1",
+          "table": "member",
+          "column": "channels",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "type",
+          "type": "select",
+          "deletionProtection": false,
+          "defaultValue": "channel",
+          "id": "type",
+          "select": ["channel", "private"],
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "Member last read 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "memberLastRead1",
+          "table": "memberLastRead",
+          "column": "channel",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null
+    },
+    {
+      "id": "myChannels",
+      "name": "My channels",
+      "tableId": "channel",
+      "parameters": [
+        { "slug": "memberID", "type": "text", "required": false },
+        { "slug": "search", "type": "text", "required": false }
+      ],
+      "sorts": [],
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "name",
+          "displayField": true,
+          "design": null
+        },
+        {
+          "name": "Messages",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "messages",
+          "table": "messages",
+          "column": "channel",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "member 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "member1",
+          "table": "member",
+          "column": "channels",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "type",
+          "type": "select",
+          "deletionProtection": false,
+          "defaultValue": "channel",
+          "id": "type",
+          "select": ["channel", "private"],
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "Member last read 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "memberLastRead1",
+          "table": "memberLastRead",
+          "column": "channel",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null
+    },
+    {
+      "id": "memberDefaultViewX",
+      "name": "member Default View X",
+      "tableId": "member",
+      "parameters": [{ "slug": "search", "type": "text", "required": false }],
+      "sorts": [],
+      "fields": [
+        {
+          "name": "email",
+          "type": "text",
+          "deletionProtection": true,
+          "defaultValue": null,
+          "id": "email",
+          "displayField": true,
+          "design": null
+        },
+        {
+          "name": "role",
+          "type": "role",
+          "deletionProtection": true,
+          "defaultValue": null,
+          "id": "role",
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "password",
+          "type": "password",
+          "deletionProtection": false,
+          "id": "password",
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "Messages 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "messages1",
+          "table": "messages",
+          "column": "from",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "channels",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
           "id": "channels",
           "table": "channel",
           "column": "member1",
