@@ -14,11 +14,16 @@ import {
   Tag,
   Popconfirm,
   message,
+  Tooltip,
+  Image,
 } from "antd";
 import {
+  FileOutlined,
+  LinkOutlined,
   LoadingOutlined,
   NumberOutlined,
   PlusOutlined,
+  SendOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import qoreContext, { client } from "../qoreContext";
@@ -65,6 +70,7 @@ const ChannelMessages = (props: { id: string }) => {
   );
   const { insertRow } = qoreContext.views.channelMessages.useInsertRow();
   const currentUser = useCurrentUser();
+  const [state, setState] = React.useState<{ image?: string }>({});
   const form = useForm<{ message: string }>({
     defaultValues: { message: "" },
     mode: "onChange",
@@ -73,14 +79,27 @@ const ChannelMessages = (props: { id: string }) => {
     if (!currentUser?.id) return;
     const { message } = form.getValues();
     form.reset({ message: "" });
+    setState({});
     await insertRow({
       message,
+      attachment: state.image,
       from: [currentUser.id],
       createdAt: new Date(),
       channel: [props.id],
     });
     channelMessages.revalidate();
-  }, [currentUser?.id, props.id]);
+  }, [currentUser?.id, props.id, state]);
+  const handleUpload = React.useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.currentTarget.files?.item(0);
+      if (!file) return;
+      const url = await qoreContext.client.views.messagesDefaultView.upload(
+        file
+      );
+      setState({ image: url });
+    },
+    []
+  );
   const handleEnter = React.useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter") {
@@ -120,69 +139,106 @@ const ChannelMessages = (props: { id: string }) => {
           overflow-y: auto;
         `}
       >
-        {channelMessages.data.map((channelMessage) => (
-          <div
-            key={channelMessage.id}
-            className={css`
-              margin: 6px 0;
-              display: flex;
-            `}
-          >
+        {channelMessages.data.map((channelMessage) => {
+          const isSelf = currentUser?.id === channelMessage.from.id;
+          return (
             <div
+              key={channelMessage.id}
               className={css`
-                margin-right: 12px;
+                margin: 6px 0;
+                display: flex;
+                ${isSelf &&
+                css`
+                  justify-items: right;
+                  flex-direction: row-reverse;
+                `}
               `}
             >
-              <Avatar
-                size="small"
-                style={{
-                  backgroundColor: stc(channelMessage.from.displayField),
-                }}
+              <div
+                className={css`
+                  margin: 0 12px;
+                `}
               >
-                {channelMessage.from.displayField.charAt(0).toUpperCase()}
-              </Avatar>
+                <Avatar
+                  size="small"
+                  style={{
+                    backgroundColor: stc(channelMessage.from.displayField),
+                  }}
+                >
+                  {channelMessage.from.displayField.charAt(0).toUpperCase()}
+                </Avatar>
+              </div>
+              <div
+                className={css`
+                  text-align: ${isSelf ? "right" : "left"};
+                `}
+              >
+                {!isSelf && (
+                  <>
+                    <Typography.Text strong>
+                      {channelMessage.from.displayField}
+                    </Typography.Text>
+                    <br />
+                  </>
+                )}
+                <div
+                  className={css`
+                    padding: 6px 8px;
+                    display: inline-block;
+                    border-radius: 8px;
+                    max-width: 560px;
+                    background-color: #dcdcdc;
+                    ${isSelf &&
+                    css`
+                      background-color: #5c5c5c;
+                      span {
+                        color: #fff !important;
+                      }
+                    `}
+                  `}
+                >
+                  <Typography.Text>{channelMessage.message}</Typography.Text>
+                </div>
+                <br />
+                {channelMessage.attachment && (
+                  <>
+                    <br />
+                    <Image width="128px" src={channelMessage.attachment} />
+                    <br />
+                  </>
+                )}
+                <Typography.Text>
+                  {dayjs(channelMessage.createdAt).fromNow()}
+                </Typography.Text>
+              </div>
+              <div
+                className={css`
+                  flex: 1;
+                `}
+              />
             </div>
-            <div
-              className={css`
-                flex: 1;
-              `}
-            >
-              <Row style={{ display: "flex" }}>
-                <Col flex={1}>
-                  <Typography.Text strong>
-                    {channelMessage.from.displayField}
-                  </Typography.Text>
-                </Col>
-                <Col>{dayjs(channelMessage.createdAt).fromNow()}</Col>
-              </Row>
-              <Typography.Text>{channelMessage.message}</Typography.Text>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <div
         className={css`
           position: absolute;
-          padding: 16px;
+          padding: 24px;
           bottom: 0;
           left: 0;
           right: 0;
           display: flex;
         `}
       >
-        <div
-          className={css`
-            margin-right: 12px;
-          `}
-        >
-          <Avatar
-            style={{
-              backgroundColor: stc(currentUser?.email),
-            }}
+        {state.image && (
+          <div
+            className={css`
+              margin-right: 12px;
+            `}
           >
-            {currentUser?.email.charAt(0).toUpperCase()}
-          </Avatar>
-        </div>
+            <Image width="32px" src={state.image} />
+          </div>
+        )}
         <div
           className={css`
             flex: 1;
@@ -195,6 +251,32 @@ const ChannelMessages = (props: { id: string }) => {
             rules={{ required: true, min: 1 }}
             render={({ value, onChange }) => (
               <Input
+                suffix={
+                  <Tooltip title="Upload file">
+                    <div
+                      className={css`
+                        cursor: pointer;
+                        position: relative;
+                      `}
+                    >
+                      <input
+                        className={css`
+                          cursor: pointer;
+                          position: absolute;
+                          left: 0;
+                          right: 0;
+                          top: 0;
+                          bottom: 0;
+                          opacity: 0;
+                        `}
+                        onChange={handleUpload}
+                        type="file"
+                        accept="image/*"
+                      />
+                      <LinkOutlined />
+                    </div>
+                  </Tooltip>
+                }
                 onKeyPress={handleEnter}
                 value={value}
                 onChange={onChange}
@@ -208,6 +290,7 @@ const ChannelMessages = (props: { id: string }) => {
             disabled={!form.formState.isValid}
             onClick={handleSendMessage}
             type="primary"
+            icon={<SendOutlined />}
           >
             Send
           </Button>
@@ -241,18 +324,14 @@ export default function Home() {
   }, []);
 
   return (
-    <Card
+    <div
       className={css`
         position: absolute;
-        left: 24px;
-        right: 24px;
-        top: 24px;
-        bottom: 24px;
-        .ant-card-body {
-          padding: 0;
-          width: 100%;
-          height: 100%;
-        }
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: #f3f3f3;
       `}
     >
       <div
@@ -265,19 +344,21 @@ export default function Home() {
           className={css`
             overflow-y: auto;
             height: 100%;
-            width: 200px;
+            background-color: #2b1515;
+            width: 280px;
           `}
         >
           <div
             className={css`
               padding: 12px;
-              border-bottom: 1px solid rgba(0, 0, 0, 0.1);
               height: 56px;
             `}
           >
             <Input.Search onSearch={handleSearch} placeholder="Search or add" />
           </div>
           <Menu
+            mode="inline"
+            defaultOpenKeys={["channels"]}
             activeKey={state.activeKey}
             onSelect={async (e) => {
               let channelID = `${e.key}`;
@@ -289,7 +370,9 @@ export default function Home() {
                   member1: [currentUser.id],
                   type: "channel",
                 });
-                channelID = newChannel.id;
+                if (newChannel?.id) {
+                  channelID = newChannel?.id;
+                }
                 done();
               }
               if (`${e.key}`.startsWith("other")) {
@@ -310,7 +393,9 @@ export default function Home() {
                   member1: [currentUser.id, memberID],
                   type: "private",
                 });
-                channelID = newChannel.id;
+                if (newChannel?.id) {
+                  channelID = newChannel?.id;
+                }
                 done();
               }
 
@@ -336,11 +421,13 @@ export default function Home() {
                 New channel "{state.search}"
               </Menu.Item>
             )}
-            {joinedChannels.data.map((channel) => (
-              <Menu.Item key={channel.id} icon={<NumberOutlined />}>
-                {channel.name}
-              </Menu.Item>
-            ))}
+            <Menu.SubMenu key="channels" title="Channels">
+              {joinedChannels.data.map((channel) => (
+                <Menu.Item key={channel.id} icon={<NumberOutlined />}>
+                  {channel.name}
+                </Menu.Item>
+              ))}
+            </Menu.SubMenu>
           </Menu>
         </div>
         <div
@@ -374,6 +461,6 @@ export default function Home() {
           )}
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

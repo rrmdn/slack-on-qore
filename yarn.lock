@@ -77,6 +77,18 @@
     insert-css "^2.0.0"
     rc-util "^5.0.1"
 
+"@ant-design/icons@^4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@ant-design/icons/-/icons-4.4.0.tgz#d4e4ba5910454e1d3f67a802d2aad9ee75a51dea"
+  integrity sha512-+X44IouK56JbP3r7zM+Zoykv5wQlXBlxY0NTaFXGpiyYSS/Bh6HIo9aTF62QkSuDTqA3UpeNVTRFioKKRmkWDQ==
+  dependencies:
+    "@ant-design/colors" "^5.0.0"
+    "@ant-design/icons-svg" "^4.0.0"
+    "@babel/runtime" "^7.11.2"
+    classnames "^2.2.6"
+    insert-css "^2.0.0"
+    rc-util "^5.0.1"
+
 "@ant-design/react-slick@~0.27.0":
   version "0.27.14"
   resolved "https://registry.yarnpkg.com/@ant-design/react-slick/-/react-slick-0.27.14.tgz#a1082c4734e57c7ba9c41d035375f5bf577f3b5e"
@@ -239,12 +251,12 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@feedloop/qore-cli@^0.1.17":
-  version "0.1.17"
-  resolved "https://registry.yarnpkg.com/@feedloop/qore-cli/-/qore-cli-0.1.17.tgz#489b4517b821f388fe4ab8584344adcdc0ff9577"
-  integrity sha512-5Mf1HvHFA4sWqtf4HM89bPbp225fVJJuMpNHRxaxCqKN4ykUma7DRKo0QluhrPxBLo8UjnuQ1xqrZ5lpqwn3Og==
+"@feedloop/qore-cli@^0.1.21":
+  version "0.1.21"
+  resolved "https://registry.yarnpkg.com/@feedloop/qore-cli/-/qore-cli-0.1.21.tgz#db53749e7482948820400d0470f2bde6cbdcab6b"
+  integrity sha512-C3jWLhO5gZ3lY2SS0cQCRTl4191XiaQSQZNsykg101regZNyXNWyIAqcJ2CIs8YkHYTPDBHkAepDQpZ4s9hzBA==
   dependencies:
-    "@feedloop/qore-sdk" "^0.1.5"
+    "@feedloop/qore-sdk" "^0.1.7"
     "@oclif/command" "^1"
     "@oclif/config" "^1"
     "@oclif/plugin-help" "^3"
@@ -270,12 +282,12 @@
     voca "^1.4.0"
     wonka "^4.0.15"
 
-"@feedloop/qore-client@^0.1.14":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@feedloop/qore-client/-/qore-client-0.1.14.tgz#21b1a9ea98e1c6c4c1135a91ea7c6d30d966fb39"
-  integrity sha512-oZoELovPeo8jUkFXkz3c0lUeS1Dnx8xwbSueopRVSUNdl8rPg+xx6yICwjQKtmf3/BDElNgYmCPVlRGZw0bB4A==
+"@feedloop/qore-client@^0.1.22":
+  version "0.1.22"
+  resolved "https://registry.yarnpkg.com/@feedloop/qore-client/-/qore-client-0.1.22.tgz#9409e1f3bc344138de4ab06b0f96b618a0711cbf"
+  integrity sha512-lMzvdcrPs0GzIqVkQ7BzWfSSolK6D855c1k184eN5TprXG8PGDCC69JFbvq9aS3axmnwi4HCzfdLV6qmpjRDJQ==
   dependencies:
-    "@feedloop/qore-sdk" "^0.1.5"
+    "@feedloop/qore-sdk" "^0.1.7"
     "@types/nock" "^11.1.0"
     axios "^0.21.0"
     immer "^8.0.0"
@@ -287,17 +299,18 @@
     type-fest "^0.20.1"
     wonka "^4.0.15"
 
-"@feedloop/qore-react@^0.1.14":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@feedloop/qore-react/-/qore-react-0.1.14.tgz#8c0914da95b022008e71a39ceaebfd621a13a696"
-  integrity sha512-Wh3Rn2DWF9K6hLoSLtafGixApyEYl5yk1bLtpxpflZsRjFqlsK0ytWHeiyWbAAT2omVAwNJgZSh9IN12VpzquQ==
+"@feedloop/qore-react@^0.1.22":
+  version "0.1.22"
+  resolved "https://registry.yarnpkg.com/@feedloop/qore-react/-/qore-react-0.1.22.tgz#3e242c9fe655a970e739c6b93100906db888c286"
+  integrity sha512-9Bo166dlfH/23UlecSY1kpMLmkB6H0poCDZ/FNep/xWHDgS/669PTkLrx1+dPgppniSGxiZ9Yc+J1nnhHIsY9w==
   dependencies:
+    type-fest "^0.20.2"
     typescript "^4.1.2"
 
-"@feedloop/qore-sdk@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@feedloop/qore-sdk/-/qore-sdk-0.1.5.tgz#f375e68be20fbcaf32a5a9f4165a6ae1526e15ea"
-  integrity sha512-DPAzVhqoUA5c1XaXtB+ihcjF8mV4KrglBmiJpYuMTJrD8xxlkPV//fH1czrqziU+UU2j1MBZiJrb02B7N9vZNQ==
+"@feedloop/qore-sdk@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@feedloop/qore-sdk/-/qore-sdk-0.1.7.tgz#e98c288e6998040fe43f446455835aa877f81e1c"
+  integrity sha512-YR3Xx6GOWMv0MVgbEAdsUeBvbsvFUgDvLQsBCs8xXXOp5LrB378mVop36KusRf2jTxUBVcqDilT3PCR4+si2sA==
   dependencies:
     axios "^0.21.0"
 
@@ -5824,7 +5837,7 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-type-fest@^0.20.1:
+type-fest@^0.20.1, type-fest@^0.20.2:
   version "0.20.2"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.20.2.tgz#1bf207f4b28f91583666cb5fbd327887301cd5f4"
   integrity sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==

@@ -132,7 +132,7 @@
           "deletionProtection": false,
           "defaultValue": null,
           "id": "message",
-          "displayField": true
+          "displayField": false
         },
         {
           "name": "attachment",
@@ -208,12 +208,26 @@
           "deletionProtection": false,
           "defaultValue": null,
           "id": "lastReadAt",
-          "displayField": true
+          "displayField": false
         }
       ]
     }
   ],
   "roles": [
+    {
+      "name": "admin",
+      "isAdmin": true,
+      "isEditor": false,
+      "isPublic": false,
+      "permissions": []
+    },
+    {
+      "name": "public",
+      "isAdmin": false,
+      "isEditor": false,
+      "isPublic": true,
+      "permissions": []
+    },
     {
       "name": "participant",
       "isAdmin": false,
@@ -225,49 +239,7 @@
           "select": true,
           "update": false,
           "delete": false,
-          "viewId": "messagesDefaultView"
-        },
-        {
-          "insert": true,
-          "select": true,
-          "update": false,
-          "delete": false,
-          "viewId": "channelMessages"
-        },
-        {
-          "insert": false,
-          "select": true,
-          "update": true,
-          "delete": false,
-          "viewId": "currentMember"
-        },
-        {
-          "insert": true,
-          "select": true,
-          "update": true,
-          "delete": false,
-          "viewId": "channelDefaultView"
-        },
-        {
-          "insert": false,
-          "select": true,
-          "update": false,
-          "delete": false,
-          "viewId": "memberDefaultView"
-        },
-        {
-          "insert": false,
-          "select": true,
-          "update": false,
-          "delete": false,
-          "viewId": "lastReadChannel"
-        },
-        {
-          "insert": false,
-          "select": true,
-          "update": false,
-          "delete": false,
-          "viewId": "myChannels"
+          "viewId": "currentMemberLastRead"
         },
         {
           "insert": false,
@@ -288,6 +260,27 @@
           "select": true,
           "update": false,
           "delete": false,
+          "viewId": "publicMembers"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "myChannels"
+        },
+        {
+          "insert": true,
+          "select": true,
+          "update": true,
+          "delete": false,
+          "viewId": "channelDefaultView"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
           "viewId": "memberLastReadDefaultView"
         },
         {
@@ -295,30 +288,37 @@
           "select": true,
           "update": false,
           "delete": false,
-          "viewId": "currentMemberLastRead"
+          "viewId": "lastReadChannel"
+        },
+        {
+          "insert": true,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "channelMessages"
         },
         {
           "insert": false,
           "select": true,
           "update": false,
           "delete": false,
-          "viewId": "publicMembers"
+          "viewId": "messagesDefaultView"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": false,
+          "delete": false,
+          "viewId": "memberDefaultView"
+        },
+        {
+          "insert": false,
+          "select": true,
+          "update": true,
+          "delete": false,
+          "viewId": "currentMember"
         }
       ]
-    },
-    {
-      "name": "public",
-      "isAdmin": false,
-      "isEditor": false,
-      "isPublic": true,
-      "permissions": []
-    },
-    {
-      "name": "admin",
-      "isAdmin": true,
-      "isEditor": false,
-      "isPublic": false,
-      "permissions": []
     }
   ],
   "forms": [
@@ -353,7 +353,12 @@
       "id": "registerForm",
       "tableId": "member",
       "fields": [
-        { "hidden": true, "required": false, "id": "role" },
+        {
+          "hidden": true,
+          "required": false,
+          "id": "role",
+          "defaultValue": "'j6TlPx2XF1FKusq'"
+        },
         { "required": true, "id": "password" },
         { "required": true, "id": "email" }
       ]
@@ -373,7 +378,7 @@
           "deletionProtection": false,
           "defaultValue": null,
           "id": "message",
-          "displayField": true,
+          "displayField": false,
           "design": null
         },
         {
@@ -435,7 +440,7 @@
           "deletionProtection": false,
           "defaultValue": null,
           "id": "message",
-          "displayField": true,
+          "displayField": false,
           "design": null
         },
         {
@@ -482,7 +487,8 @@
           "design": null
         }
       ],
-      "design": null
+      "design": null,
+      "filter": "channel.id = $param.channelID"
     },
     {
       "id": "currentMember",
@@ -542,7 +548,8 @@
           "design": null
         }
       ],
-      "design": null
+      "design": null,
+      "filter": "id = $user.data.id"
     },
     {
       "id": "memberLastReadDefaultView",
@@ -638,7 +645,8 @@
           "design": null
         }
       ],
-      "design": null
+      "design": null,
+      "filter": "name.startsWith($param.search)"
     },
     {
       "id": "currentMemberLastRead",
@@ -681,7 +689,8 @@
           "design": null
         }
       ],
-      "design": null
+      "design": null,
+      "filter": "member.id = $user.data.id"
     },
     {
       "id": "lastReadChannel",
@@ -818,7 +827,8 @@
           "design": null
         }
       ],
-      "design": null
+      "design": null,
+      "filter": "email.startsWith($params.search)"
     },
     {
       "id": "privateChannels",
@@ -886,7 +896,8 @@
           "design": null
         }
       ],
-      "design": null
+      "design": null,
+      "filter": "((member1.id = $param.memberID) AND member1.email.startsWith($param.search)) AND (type = 'private')"
     },
     {
       "id": "channelsExcludingMember",
@@ -951,7 +962,8 @@
           "design": null
         }
       ],
-      "design": null
+      "design": null,
+      "filter": "(member1.id != $param.memberID) AND (type = 'channel')"
     },
     {
       "id": "myChannels",
@@ -1019,7 +1031,8 @@
           "design": null
         }
       ],
-      "design": null
+      "design": null,
+      "filter": "((member1.id = $param.memberID) AND name.startsWith($param.search)) AND (type = 'channel')"
     },
     {
       "id": "memberDefaultView",
@@ -1079,7 +1092,8 @@
           "design": null
         }
       ],
-      "design": null
+      "design": null,
+      "filter": "email.startsWith($param.search)"
     }
   ]
 }

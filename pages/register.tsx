@@ -1,5 +1,6 @@
 import React from "react";
 import { css } from "@emotion/css";
+import { KeyOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Card, Form, Input, message, Space, Typography } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
@@ -38,12 +39,31 @@ export default function Register() {
   return (
     <div
       className={css`
-        margin: 100px auto;
-        width: 320px;
+        display: flex;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        justify-content: center;
+        align-items: center;
+        background: rgba(98, 35, 41, 1);
+        background: linear-gradient(
+          327deg,
+          rgba(0, 0, 0, 1) 0%,
+          rgba(43, 21, 21, 1) 34%,
+          rgba(98, 35, 41, 1) 68%,
+          rgba(223, 69, 85, 1) 100%
+        );
       `}
     >
-      <Card>
-        <Typography.Title level={4}>Register</Typography.Title>
+      <Card
+        className={css`
+          width: 420px;
+          box-shadow: 0 0px 9px 5px rgb(0 0 0 / 15%);
+        `}
+      >
+        <Typography.Title level={4}>Register to Slack on Qore</Typography.Title>
         <Form layout="vertical">
           <Form.Item label="Email">
             <Controller
@@ -52,6 +72,7 @@ export default function Register() {
               rules={{ required: true }}
               render={({ value, onChange }) => (
                 <Input
+                  prefix={<MailOutlined />}
                   onChange={onChange}
                   placeholder="Email here"
                   value={value}
@@ -68,6 +89,7 @@ export default function Register() {
               }}
               render={({ value, onChange }) => (
                 <Input
+                  prefix={<KeyOutlined />}
                   onChange={onChange}
                   type="password"
                   placeholder="Password here"
@@ -94,6 +116,7 @@ export default function Register() {
               }}
               render={({ value, onChange }) => (
                 <Input
+                  prefix={<KeyOutlined />}
                   onChange={onChange}
                   type="password"
                   placeholder="Confirm password"
@@ -103,20 +126,18 @@ export default function Register() {
             />
           </Form.Item>
         </Form>
-        <Form.Item>
-          <Space>
-            <Button
-              disabled={!form.formState.isValid || state.status === "loading"}
-              onClick={handleSubmit}
-              type="primary"
-            >
-              {state.status === "loading" ? "Registering.." : "Register"}
-            </Button>
-            <Link href="/login" as="/login">
-              <Button>Login</Button>
-            </Link>
-          </Space>
-        </Form.Item>
+        <Space>
+          <Button
+            disabled={!form.formState.isValid || state.status === "loading"}
+            onClick={handleSubmit}
+            type="primary"
+          >
+            {state.status === "loading" ? "Registering.." : "Register"}
+          </Button>
+          <Link href="/login" as="/login">
+            <Button>Login</Button>
+          </Link>
+        </Space>
       </Card>
     </div>
   );

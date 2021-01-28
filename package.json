@@ -5,13 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "qore-stg": "QORE_SERVER=https://stg-qore-app.qorebase.io yarn qore",
     "start": "next start"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.3.0",
+    "@ant-design/icons": "^4.4.0",
     "@emotion/css": "^11.1.3",
-    "@feedloop/qore-client": "^0.1.14",
-    "@feedloop/qore-react": "^0.1.14",
+    "@feedloop/qore-client": "^0.1.22",
+    "@feedloop/qore-react": "^0.1.22",
     "@types/js-cookie": "^2.2.6",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-less": "^1.0.1",
@@ -30,7 +31,7 @@
     "string-to-color": "^2.2.2"
   },
   "devDependencies": {
-    "@feedloop/qore-cli": "^0.1.17",
+    "@feedloop/qore-cli": "^0.1.21",
     "@types/react": "^17.0.0"
   }
 }
