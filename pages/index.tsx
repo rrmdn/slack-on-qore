@@ -60,15 +60,15 @@ const useCurrentUser = () => {
 };
 
 const ChannelMessages = (props: { id: string }) => {
-  const channel = qoreContext.views.channelDefaultView.useGetRow(props.id);
-  const channelMessages = qoreContext.views.channelMessages.useListRow(
+  const channel = qoreContext.view("channelDefaultView").useGetRow(props.id);
+  const channelMessages = qoreContext.view("channelMessages").useListRow(
     {
       channelID: props.id,
       "$by.createdAt": "desc",
     },
     { pollInterval: 2000 }
   );
-  const { insertRow } = qoreContext.views.channelMessages.useInsertRow();
+  const { insertRow } = qoreContext.view("channelMessages").useInsertRow();
   const currentUser = useCurrentUser();
   const [state, setState] = React.useState<{ image?: string }>({});
   const form = useForm<{ message: string }>({

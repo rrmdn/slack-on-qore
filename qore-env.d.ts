@@ -285,7 +285,7 @@ declare module "@feedloop/qore-client" {
     actions: {};
   };
 
-  interface ProjectSchema extends QoreSchema {
+  type ProjectSchema = {
     messagesDefaultView: MessagesDefaultViewViewRow;
     channelMessages: ChannelMessagesViewRow;
     currentMember: CurrentMemberViewRow;
@@ -298,5 +298,5 @@ declare module "@feedloop/qore-client" {
     channelsExcludingMember: ChannelsExcludingMemberViewRow;
     myChannels: MyChannelsViewRow;
     memberDefaultView: MemberDefaultViewViewRow;
-  }
+  };
 }

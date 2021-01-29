@@ -251,10 +251,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@feedloop/qore-cli@^0.1.21":
-  version "0.1.21"
-  resolved "https://registry.yarnpkg.com/@feedloop/qore-cli/-/qore-cli-0.1.21.tgz#db53749e7482948820400d0470f2bde6cbdcab6b"
-  integrity sha512-C3jWLhO5gZ3lY2SS0cQCRTl4191XiaQSQZNsykg101regZNyXNWyIAqcJ2CIs8YkHYTPDBHkAepDQpZ4s9hzBA==
+"@feedloop/qore-cli@^0.1.22":
+  version "0.1.22"
+  resolved "https://registry.yarnpkg.com/@feedloop/qore-cli/-/qore-cli-0.1.22.tgz#66d5aa722125c552102bdc52fdd9a61a21edb1c0"
+  integrity sha512-wwCKxOD2cLQzSEUsn0eJu9xTd1p5YRmY37CKzqLWaR6ChB/W7TEpadB9iZvvTojk7poDHNzzxFuMd09Tgp/FNA==
   dependencies:
     "@feedloop/qore-sdk" "^0.1.7"
     "@oclif/command" "^1"

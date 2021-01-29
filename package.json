@@ -31,7 +31,7 @@
     "string-to-color": "^2.2.2"
   },
   "devDependencies": {
-    "@feedloop/qore-cli": "^0.1.21",
+    "@feedloop/qore-cli": "^0.1.22",
     "@types/react": "^17.0.0"
   }
 }
