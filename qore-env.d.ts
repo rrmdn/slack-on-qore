@@ -20,8 +20,7 @@ declare module "@feedloop/qore-client" {
     messages: { nodes: MessagesTableRow[] };
     member1: { nodes: Member1TableRow[] };
     type: "channel" | "private";
-    lastReadChannel: { nodes: LastReadChannelTableRow[] };
-    unreadMessages: number;
+    hasCurrentUser: number;
   };
 
   type MessagesTableRow = {
@@ -37,7 +36,6 @@ declare module "@feedloop/qore-client" {
     id: string;
     member: MemberTableRow;
     lastReadAt: Date;
-    lastReadChannel: { nodes: LastReadChannelTableRow[] };
   };
 
   type MessagesDefaultViewViewRow = {
@@ -57,29 +55,6 @@ declare module "@feedloop/qore-client" {
       createdAt: Date;
     };
     params: {};
-    actions: {};
-  };
-
-  type ChannelMessagesViewRow = {
-    read: {
-      id: string;
-      message: string;
-      attachment: string;
-      channel: ChannelTableRow;
-      from: FromTableRow;
-      createdAt: Date;
-    };
-    write: {
-      message: string;
-      attachment: string;
-      channel: string[];
-      from: string[];
-      createdAt: Date;
-    };
-    params: {
-      channelID: string;
-      "$by.createdAt"?: "desc";
-    };
     actions: {};
   };
 
@@ -107,12 +82,10 @@ declare module "@feedloop/qore-client" {
       id: string;
       member: MemberTableRow;
       lastReadAt: Date;
-      lastReadChannel: { nodes: LastReadChannelTableRow[] };
     };
     write: {
       member: string[];
       lastReadAt: Date;
-      lastReadChannel: string[];
     };
     params: {};
     actions: {};
@@ -125,6 +98,7 @@ declare module "@feedloop/qore-client" {
       messages: { nodes: MessagesTableRow[] };
       member1: { nodes: Member1TableRow[] };
       type: "channel" | "private";
+      hasCurrentUser: number;
     };
     write: {
       name: string;
@@ -135,7 +109,13 @@ declare module "@feedloop/qore-client" {
     params: {
       search?: string;
     };
-    actions: {};
+    actions: {
+      sendMessage: {
+        message?: string;
+        attachment?: string;
+      };
+      join: {};
+    };
   };
 
   type CurrentMemberLastReadViewRow = {
@@ -175,27 +155,30 @@ declare module "@feedloop/qore-client" {
     actions: {};
   };
 
-  type MyChannelsViewRow = {
+  type JoinedChannelsViewRow = {
     read: {
       id: string;
       name: string;
       messages: { nodes: MessagesTableRow[] };
       member1: { nodes: Member1TableRow[] };
       type: "channel" | "private";
-      lastReadChannel: { nodes: LastReadChannelTableRow[] };
-      unreadMessages: number;
+      hasCurrentUser: number;
     };
     write: {
       name: string;
       messages: string[];
       member1: string[];
       type: "channel" | "private";
-      lastReadChannel: string[];
     };
     params: {
       search?: string;
     };
-    actions: {};
+    actions: {
+      sendMessage: {
+        message?: string;
+        attachment?: string;
+      };
+    };
   };
 
   type MemberDefaultViewViewRow = {
@@ -219,6 +202,30 @@ declare module "@feedloop/qore-client" {
     actions: {};
   };
 
+  type ChannelMessagesViewRow = {
+    read: {
+      id: string;
+      message: string;
+      attachment: string;
+      channel: ChannelTableRow;
+      from: FromTableRow;
+      createdAt: Date;
+    };
+    write: {
+      message: string;
+      attachment: string;
+      channel: string[];
+      from: string[];
+      createdAt: Date;
+    };
+    params: {
+      channelID: string;
+      after?: string;
+      "$by.createdAt"?: "desc";
+    };
+    actions: {};
+  };
+
   type PrivateChannelsViewRow = {
     read: {
       id: string;
@@ -226,6 +233,7 @@ declare module "@feedloop/qore-client" {
       messages: { nodes: MessagesTableRow[] };
       member1: { nodes: Member1TableRow[] };
       type: "channel" | "private";
+      hasCurrentUser: number;
     };
     write: {
       name: string;
@@ -236,19 +244,24 @@ declare module "@feedloop/qore-client" {
     params: {
       search?: string;
     };
-    actions: {};
+    actions: {
+      sendMessage: {
+        message?: string;
+        attachment?: string;
+      };
+    };
   };
 
   type ProjectSchema = {
     messagesDefaultView: MessagesDefaultViewViewRow;
-    channelMessages: ChannelMessagesViewRow;
     currentMember: CurrentMemberViewRow;
     memberLastReadDefaultView: MemberLastReadDefaultViewViewRow;
     channelDefaultView: ChannelDefaultViewViewRow;
     currentMemberLastRead: CurrentMemberLastReadViewRow;
     publicMembers: PublicMembersViewRow;
-    myChannels: MyChannelsViewRow;
+    joinedChannels: JoinedChannelsViewRow;
     memberDefaultView: MemberDefaultViewViewRow;
+    channelMessages: ChannelMessagesViewRow;
     privateChannels: PrivateChannelsViewRow;
   };
 }

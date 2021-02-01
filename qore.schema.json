@@ -109,25 +109,52 @@
           "displayField": false
         },
         {
-          "name": "Last read channel",
-          "type": "relation",
+          "name": "sendMessage",
+          "type": "action",
           "deletionProtection": false,
           "defaultValue": null,
-          "id": "lastReadChannel",
-          "table": "memberLastRead",
-          "column": "lastReadChannel",
-          "multiple": true,
+          "id": "sendMessage",
+          "parameters": [
+            { "slug": "message", "type": "text" },
+            { "slug": "attachment", "type": "text" }
+          ],
+          "tasks": [
+            {
+              "type": "insert",
+              "insert": {
+                "attachment": "$param.attachment",
+                "message": "$param.message",
+                "channel": "id",
+                "from": "$user.data.id"
+              },
+              "table": "messages"
+            }
+          ],
+          "condition": null,
           "displayField": false
         },
         {
-          "name": "Unread messages",
+          "name": "has current user",
           "type": "rollup",
           "deletionProtection": false,
           "defaultValue": null,
-          "id": "unreadMessages",
-          "source": "messages",
+          "id": "hasCurrentUser",
+          "source": "member1",
           "destinations": ["id"],
           "aggregate": "count",
+          "condition": "id = $user.data.id",
+          "displayField": false
+        },
+        {
+          "name": "join",
+          "type": "action",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "join",
+          "parameters": [],
+          "tasks": [
+            { "type": "update", "update": { "member1": "$user.data.id" } }
+          ],
           "condition": null,
           "displayField": false
         }
@@ -210,17 +237,6 @@
           "defaultValue": null,
           "id": "lastReadAt",
           "displayField": false
-        },
-        {
-          "name": "channel 2",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "lastReadChannel",
-          "table": "channel",
-          "column": "lastReadChannel",
-          "multiple": true,
-          "displayField": false
         }
       ]
     }
@@ -248,13 +264,13 @@
       "permissions": [
         {
           "insert": false,
-          "select": true,
+          "select": false,
           "update": false,
           "delete": false,
           "viewId": "currentMemberLastRead"
         },
         {
-          "insert": false,
+          "insert": true,
           "select": true,
           "update": false,
           "delete": false,
@@ -268,22 +284,22 @@
           "viewId": "publicMembers"
         },
         {
-          "insert": false,
+          "insert": true,
           "select": true,
           "update": false,
           "delete": false,
-          "viewId": "myChannels"
+          "viewId": "joinedChannels"
         },
         {
-          "insert": true,
-          "select": true,
-          "update": true,
+          "insert": false,
+          "select": false,
+          "update": false,
           "delete": false,
           "viewId": "channelDefaultView"
         },
         {
           "insert": false,
-          "select": true,
+          "select": false,
           "update": false,
           "delete": false,
           "viewId": "memberLastReadDefaultView"
@@ -297,14 +313,14 @@
         },
         {
           "insert": false,
-          "select": true,
+          "select": false,
           "update": false,
           "delete": false,
           "viewId": "messagesDefaultView"
         },
         {
           "insert": false,
-          "select": true,
+          "select": false,
           "update": false,
           "delete": false,
           "viewId": "memberDefaultView"
@@ -400,69 +416,6 @@
       "design": null
     },
     {
-      "id": "channelMessages",
-      "name": "Channel messages",
-      "tableId": "messages",
-      "parameters": [{ "slug": "channelID", "type": "text", "required": true }],
-      "sorts": [{ "by": "createdAt", "order": "desc" }],
-      "fields": [
-        {
-          "name": "message",
-          "type": "text",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "message",
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "attachment",
-          "type": "file",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "fileType": "image",
-          "id": "attachment",
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "channel",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "channel",
-          "table": "channel",
-          "column": "messages",
-          "multiple": false,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "from",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "from",
-          "table": "member",
-          "column": "messages1",
-          "multiple": false,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "createdAt",
-          "type": "date",
-          "deletionProtection": false,
-          "defaultValue": "now()",
-          "id": "createdAt",
-          "displayField": false,
-          "design": null
-        }
-      ],
-      "design": null,
-      "filter": "channel.id = $param.channelID"
-    },
-    {
       "id": "currentMember",
       "name": "Current member",
       "tableId": "member",
@@ -550,18 +503,6 @@
           "id": "lastReadAt",
           "displayField": false,
           "design": null
-        },
-        {
-          "name": "channel 2",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "lastReadChannel",
-          "table": "channel",
-          "column": "lastReadChannel",
-          "multiple": true,
-          "displayField": false,
-          "design": null
         }
       ],
       "design": null
@@ -613,6 +554,59 @@
           "defaultValue": "channel",
           "id": "type",
           "select": ["channel", "private"],
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "sendMessage",
+          "type": "action",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "sendMessage",
+          "parameters": [
+            { "slug": "message", "type": "text" },
+            { "slug": "attachment", "type": "text" }
+          ],
+          "tasks": [
+            {
+              "type": "insert",
+              "insert": {
+                "attachment": "$param.attachment",
+                "message": "$param.message",
+                "channel": "id",
+                "from": "$user.data.id"
+              },
+              "table": "messages"
+            }
+          ],
+          "condition": null,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "join",
+          "type": "action",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "join",
+          "parameters": [],
+          "tasks": [
+            { "type": "update", "update": { "member1": "$user.data.id" } }
+          ],
+          "condition": null,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "has current user",
+          "type": "rollup",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "hasCurrentUser",
+          "source": "member1",
+          "destinations": ["id"],
+          "aggregate": "count",
+          "condition": "id = $user.data.id",
           "displayField": false,
           "design": null
         }
@@ -726,8 +720,8 @@
       "filter": "email.startsWith($params.search)"
     },
     {
-      "id": "myChannels",
-      "name": "My channels",
+      "id": "joinedChannels",
+      "name": "Joined channels",
       "tableId": "channel",
       "parameters": [{ "slug": "search", "type": "text", "required": false }],
       "sorts": [],
@@ -776,27 +770,41 @@
           "design": null
         },
         {
-          "name": "Last read channel",
-          "type": "relation",
+          "name": "sendMessage",
+          "type": "action",
           "deletionProtection": false,
           "defaultValue": null,
-          "id": "lastReadChannel",
-          "table": "memberLastRead",
-          "column": "lastReadChannel",
-          "multiple": true,
+          "id": "sendMessage",
+          "parameters": [
+            { "slug": "message", "type": "text" },
+            { "slug": "attachment", "type": "text" }
+          ],
+          "tasks": [
+            {
+              "type": "insert",
+              "insert": {
+                "attachment": "$param.attachment",
+                "message": "$param.message",
+                "channel": "id",
+                "from": "$user.data.id"
+              },
+              "table": "messages"
+            }
+          ],
+          "condition": null,
           "displayField": false,
           "design": null
         },
         {
-          "name": "Unread messages",
+          "name": "has current user",
           "type": "rollup",
           "deletionProtection": false,
           "defaultValue": null,
-          "id": "unreadMessages",
-          "source": "messages",
+          "id": "hasCurrentUser",
+          "source": "member1",
           "destinations": ["id"],
           "aggregate": "count",
-          "condition": null,
+          "condition": "id = $user.data.id",
           "displayField": false,
           "design": null
         }
@@ -866,6 +874,72 @@
       "filter": "email.startsWith($param.search)"
     },
     {
+      "id": "channelMessages",
+      "name": "Channel messages",
+      "tableId": "messages",
+      "parameters": [
+        { "slug": "channelID", "type": "text", "required": true },
+        { "slug": "after", "type": "text", "required": false }
+      ],
+      "sorts": [{ "by": "createdAt", "order": "desc" }],
+      "fields": [
+        {
+          "name": "message",
+          "type": "text",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "message",
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "attachment",
+          "type": "file",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "fileType": "image",
+          "id": "attachment",
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "channel",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "channel",
+          "table": "channel",
+          "column": "messages",
+          "multiple": false,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "from",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "from",
+          "table": "member",
+          "column": "messages1",
+          "multiple": false,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "createdAt",
+          "type": "date",
+          "deletionProtection": false,
+          "defaultValue": "now()",
+          "id": "createdAt",
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null,
+      "filter": "(channel.id = $param.channelID) AND (createdAt >= $param.after)"
+    },
+    {
       "id": "privateChannels",
       "name": "Private channels",
       "tableId": "channel",
@@ -914,10 +988,49 @@
           "select": ["channel", "private"],
           "displayField": false,
           "design": null
+        },
+        {
+          "name": "has current user",
+          "type": "rollup",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "hasCurrentUser",
+          "source": "member1",
+          "destinations": ["id"],
+          "aggregate": "count",
+          "condition": "id = $user.data.id",
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "sendMessage",
+          "type": "action",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "sendMessage",
+          "parameters": [
+            { "slug": "message", "type": "text" },
+            { "slug": "attachment", "type": "text" }
+          ],
+          "tasks": [
+            {
+              "type": "insert",
+              "insert": {
+                "attachment": "$param.attachment",
+                "message": "$param.message",
+                "channel": "id",
+                "from": "$user.data.id"
+              },
+              "table": "messages"
+            }
+          ],
+          "condition": null,
+          "displayField": false,
+          "design": null
         }
       ],
       "design": null,
-      "filter": "((member1.id = $user.data.id) AND member1.email.startsWith($param.search)) AND (type = 'private')"
+      "filter": "(hasCurrentUser > 0) AND (type = 'private')"
     }
   ]
 }

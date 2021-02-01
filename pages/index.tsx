@@ -46,27 +46,29 @@ const ChannelMessages = (props: { id: string }) => {
       channelID: props.id,
       "$by.createdAt": "desc",
     },
-    { pollInterval: 2000 }
+    { pollInterval: 5000 }
   );
-  const { insertRow } = qoreContext.view("channelMessages").useInsertRow();
   const currentUser = useCurrentUser();
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [state, setState] = React.useState<{ image?: string }>({});
   const form = useForm<{ message: string }>({
     defaultValues: { message: "" },
     mode: "onChange",
   });
+  const sendMessage = qoreContext
+    .view(
+      channel.data?.type === "channel" ? "joinedChannels" : "privateChannels"
+    )
+    .useActions(props.id);
+
   const handleSendMessage = React.useCallback(async () => {
     if (!currentUser?.id) return;
     const { message } = form.getValues();
     form.reset({ message: "" });
     setState({});
-    await insertRow({
-      message,
-      attachment: state.image,
-      from: [currentUser.id],
-      createdAt: new Date(),
-      channel: [props.id],
-    });
+    await sendMessage
+      .action("sendMessage")
+      .trigger({ message, attachment: state.image });
     channelMessages.revalidate();
   }, [currentUser?.id, props.id, state]);
   const handleUpload = React.useCallback(
@@ -234,6 +236,9 @@ const ChannelMessages = (props: { id: string }) => {
                 suffix={
                   <Tooltip title="Upload file">
                     <div
+                      onClick={() => {
+                        fileInputRef.current?.click();
+                      }}
                       className={css`
                         cursor: pointer;
                         position: relative;
@@ -241,14 +246,9 @@ const ChannelMessages = (props: { id: string }) => {
                     >
                       <input
                         className={css`
-                          cursor: pointer;
-                          position: absolute;
-                          left: 0;
-                          right: 0;
-                          top: 0;
-                          bottom: 0;
-                          opacity: 0;
+                          display: none;
                         `}
+                        ref={fileInputRef}
                         onChange={handleUpload}
                         type="file"
                         accept="image/*"
@@ -286,7 +286,7 @@ export default function Home() {
     activeKey?: string;
     search: string;
   }>({ search: "" });
-  const joinedChannels = qoreContext.view("myChannels").useListRow({
+  const joinedChannels = qoreContext.view("joinedChannels").useListRow({
     search: state.search,
     limit: currentUser?.id ? undefined : 0, // skip fetching
   });
@@ -294,10 +294,13 @@ export default function Home() {
     search: state.search,
     limit: currentUser?.id ? undefined : 0, // skip fetching
   });
-  const {
-    insertRow,
-    status,
-  } = qoreContext.views.channelDefaultView.useInsertRow();
+  const publicMembers = qoreContext.view("publicMembers").useListRow({
+    search: state.search,
+    limit: !!state.search ? 5 : 0,
+  });
+  const { insertRow, status } = qoreContext
+    .view("joinedChannels")
+    .useInsertRow();
 
   const handleSearch = React.useCallback((search: string) => {
     setState((state) =>
@@ -409,6 +412,11 @@ export default function Home() {
                 New channel "{state.search}"
               </Menu.Item>
             )}
+            {publicMembers.data.map((member) => (
+              <Menu.Item key={`DM:${member.email}`} icon={<MailOutlined />}>
+                DM to {member.email}
+              </Menu.Item>
+            ))}
             <Menu.SubMenu key="channels" title="Channels">
               {joinedChannels.data.map((channel) => (
                 <Menu.Item key={channel.id} icon={<NumberOutlined />}>
@@ -417,15 +425,17 @@ export default function Home() {
               ))}
             </Menu.SubMenu>
             <Menu.SubMenu key="privateMessages" title="Private Messages">
-              {privateChannels.data.map((channel) => (
-                <Menu.Item key={channel.id} icon={<MailOutlined />}>
-                  {
-                    channel.member1.nodes.find(
-                      (member) => member.id !== currentUser.id
-                    )?.displayField
-                  }
-                </Menu.Item>
-              ))}
+              {privateChannels.data
+                .filter((channel) => channel.hasCurrentUser)
+                .map((channel) => (
+                  <Menu.Item key={channel.id} icon={<MailOutlined />}>
+                    {
+                      channel.member1.nodes.find(
+                        (member) => member.id !== currentUser.id
+                      )?.displayField
+                    }
+                  </Menu.Item>
+                ))}
             </Menu.SubMenu>
           </Menu>
         </div>
@@ -439,7 +449,7 @@ export default function Home() {
           `}
         >
           {state.activeKey ? (
-            <ChannelMessages id={state.activeKey} />
+            <ChannelMessages key={state.activeKey} id={state.activeKey} />
           ) : (
             <div
               className={css`
