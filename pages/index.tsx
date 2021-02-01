@@ -21,41 +21,21 @@ import {
   FileOutlined,
   LinkOutlined,
   LoadingOutlined,
+  MailOutlined,
   NumberOutlined,
   PlusOutlined,
   SendOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 import qoreContext, { client } from "../qoreContext";
 import dayjs from "../dayjs";
 import { Controller, useForm } from "react-hook-form";
-import { ProjectSchema } from "@feedloop/qore-client";
 import produce from "immer";
-import { MenuProps } from "rc-menu";
 
 const useCurrentUser = () => {
-  /*
-  * waiting for implementation:
-   const currentMembers = qoreContext.views.currentMember.useListRow();
-   const user = React.useMemo(() => {
-     return currentMembers.data[0];
-   }, [currentMembers.data]);
-  */
-  const [user, setUser] = React.useState<
-    ProjectSchema["memberDefaultView"]["read"] | undefined
-  >();
-  React.useEffect(() => {
-    const { endpoint, organizationId, projectId } = client.project.config;
-    client.project.axios
-      .request<{ data: ProjectSchema["memberDefaultView"]["read"] }>({
-        baseURL: endpoint,
-        url: `/orgs/${organizationId}/projects/${projectId}/me`,
-        method: "GET",
-      })
-      .then((resp) => {
-        setUser(resp.data.data);
-      });
-  }, []);
+  const currentMembers = qoreContext.view("currentMember").useListRow();
+  const user = React.useMemo(() => {
+    return currentMembers.data[0];
+  }, [currentMembers.data]);
   return user;
 };
 
@@ -306,7 +286,11 @@ export default function Home() {
     activeKey?: string;
     search: string;
   }>({ search: "" });
-  const joinedChannels = qoreContext.views.channelDefaultView.useListRow({
+  const joinedChannels = qoreContext.view("myChannels").useListRow({
+    search: state.search,
+    limit: currentUser?.id ? undefined : 0, // skip fetching
+  });
+  const privateChannels = qoreContext.view("privateChannels").useListRow({
     search: state.search,
     limit: currentUser?.id ? undefined : 0, // skip fetching
   });
@@ -354,11 +338,15 @@ export default function Home() {
               height: 56px;
             `}
           >
-            <Input.Search onSearch={handleSearch} placeholder="Search or add" />
+            <Input.Search
+              onSearch={handleSearch}
+              allowClear
+              placeholder="Search or add"
+            />
           </div>
           <Menu
             mode="inline"
-            defaultOpenKeys={["channels"]}
+            defaultOpenKeys={["channels", "privateMessages"]}
             activeKey={state.activeKey}
             onSelect={async (e) => {
               let channelID = `${e.key}`;
@@ -425,6 +413,17 @@ export default function Home() {
               {joinedChannels.data.map((channel) => (
                 <Menu.Item key={channel.id} icon={<NumberOutlined />}>
                   {channel.name}
+                </Menu.Item>
+              ))}
+            </Menu.SubMenu>
+            <Menu.SubMenu key="privateMessages" title="Private Messages">
+              {privateChannels.data.map((channel) => (
+                <Menu.Item key={channel.id} icon={<MailOutlined />}>
+                  {
+                    channel.member1.nodes.find(
+                      (member) => member.id !== currentUser.id
+                    )?.displayField
+                  }
                 </Menu.Item>
               ))}
             </Menu.SubMenu>

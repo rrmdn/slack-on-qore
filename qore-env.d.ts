@@ -20,7 +20,8 @@ declare module "@feedloop/qore-client" {
     messages: { nodes: MessagesTableRow[] };
     member1: { nodes: Member1TableRow[] };
     type: "channel" | "private";
-    memberLastRead1: { nodes: MemberLastRead1TableRow[] };
+    lastReadChannel: { nodes: LastReadChannelTableRow[] };
+    unreadMessages: number;
   };
 
   type MessagesTableRow = {
@@ -35,8 +36,8 @@ declare module "@feedloop/qore-client" {
   type MemberLastReadTableRow = {
     id: string;
     member: MemberTableRow;
-    channel: ChannelTableRow;
     lastReadAt: Date;
+    lastReadChannel: { nodes: LastReadChannelTableRow[] };
   };
 
   type MessagesDefaultViewViewRow = {
@@ -105,13 +106,13 @@ declare module "@feedloop/qore-client" {
     read: {
       id: string;
       member: MemberTableRow;
-      channel: ChannelTableRow;
       lastReadAt: Date;
+      lastReadChannel: { nodes: LastReadChannelTableRow[] };
     };
     write: {
       member: string[];
-      channel: string[];
       lastReadAt: Date;
+      lastReadChannel: string[];
     };
     params: {};
     actions: {};
@@ -141,33 +142,11 @@ declare module "@feedloop/qore-client" {
     read: {
       id: string;
       member: MemberTableRow;
-      channel: ChannelTableRow;
       lastReadAt: Date;
     };
     write: {
       member: string[];
-      channel: string[];
       lastReadAt: Date;
-    };
-    params: {};
-    actions: {};
-  };
-
-  type LastReadChannelViewRow = {
-    read: {
-      id: string;
-      name: string;
-      messages: { nodes: MessagesTableRow[] };
-      member1: { nodes: Member1TableRow[] };
-      type: "channel" | "private";
-      memberLastRead1: { nodes: MemberLastRead1TableRow[] };
-    };
-    write: {
-      name: string;
-      messages: string[];
-      member1: string[];
-      type: "channel" | "private";
-      memberLastRead1: string[];
     };
     params: {};
     actions: {};
@@ -196,51 +175,6 @@ declare module "@feedloop/qore-client" {
     actions: {};
   };
 
-  type PrivateChannelsViewRow = {
-    read: {
-      id: string;
-      name: string;
-      messages: { nodes: MessagesTableRow[] };
-      member1: { nodes: Member1TableRow[] };
-      type: "channel" | "private";
-      memberLastRead1: { nodes: MemberLastRead1TableRow[] };
-    };
-    write: {
-      name: string;
-      messages: string[];
-      member1: string[];
-      type: "channel" | "private";
-      memberLastRead1: string[];
-    };
-    params: {
-      memberID?: string;
-      search?: string;
-    };
-    actions: {};
-  };
-
-  type ChannelsExcludingMemberViewRow = {
-    read: {
-      id: string;
-      name: string;
-      messages: { nodes: MessagesTableRow[] };
-      member1: { nodes: Member1TableRow[] };
-      type: "channel" | "private";
-      memberLastRead1: { nodes: MemberLastRead1TableRow[] };
-    };
-    write: {
-      name: string;
-      messages: string[];
-      member1: string[];
-      type: "channel" | "private";
-      memberLastRead1: string[];
-    };
-    params: {
-      memberID?: string;
-    };
-    actions: {};
-  };
-
   type MyChannelsViewRow = {
     read: {
       id: string;
@@ -248,17 +182,17 @@ declare module "@feedloop/qore-client" {
       messages: { nodes: MessagesTableRow[] };
       member1: { nodes: Member1TableRow[] };
       type: "channel" | "private";
-      memberLastRead1: { nodes: MemberLastRead1TableRow[] };
+      lastReadChannel: { nodes: LastReadChannelTableRow[] };
+      unreadMessages: number;
     };
     write: {
       name: string;
       messages: string[];
       member1: string[];
       type: "channel" | "private";
-      memberLastRead1: string[];
+      lastReadChannel: string[];
     };
     params: {
-      memberID?: string;
       search?: string;
     };
     actions: {};
@@ -285,6 +219,26 @@ declare module "@feedloop/qore-client" {
     actions: {};
   };
 
+  type PrivateChannelsViewRow = {
+    read: {
+      id: string;
+      name: string;
+      messages: { nodes: MessagesTableRow[] };
+      member1: { nodes: Member1TableRow[] };
+      type: "channel" | "private";
+    };
+    write: {
+      name: string;
+      messages: string[];
+      member1: string[];
+      type: "channel" | "private";
+    };
+    params: {
+      search?: string;
+    };
+    actions: {};
+  };
+
   type ProjectSchema = {
     messagesDefaultView: MessagesDefaultViewViewRow;
     channelMessages: ChannelMessagesViewRow;
@@ -292,11 +246,9 @@ declare module "@feedloop/qore-client" {
     memberLastReadDefaultView: MemberLastReadDefaultViewViewRow;
     channelDefaultView: ChannelDefaultViewViewRow;
     currentMemberLastRead: CurrentMemberLastReadViewRow;
-    lastReadChannel: LastReadChannelViewRow;
     publicMembers: PublicMembersViewRow;
-    privateChannels: PrivateChannelsViewRow;
-    channelsExcludingMember: ChannelsExcludingMemberViewRow;
     myChannels: MyChannelsViewRow;
     memberDefaultView: MemberDefaultViewViewRow;
+    privateChannels: PrivateChannelsViewRow;
   };
 }

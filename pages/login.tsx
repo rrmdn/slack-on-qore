@@ -18,8 +18,8 @@ import { client } from "../qoreContext";
 import Link from "next/link";
 
 export default function Login() {
-  const form = useForm<{ email: string; password: string }>({
-    defaultValues: { email: "", password: "" },
+  const form = useForm<{ email: string; password: string; remember: boolean }>({
+    defaultValues: { email: "", password: "", remember: true },
     mode: "onChange",
   });
   const [state, setState] = React.useState<{
@@ -33,7 +33,10 @@ export default function Login() {
       setState({ status: "loading" });
       try {
         const token = await client.authenticate(values.email, values.password);
-        Cookies.set("token", token, { path: "/" });
+        Cookies.set("token", token, {
+          path: "/",
+          expires: values.remember ? 7 : undefined,
+        });
         setState({ status: "success" });
         message.success("Logged in");
         router.push("/", "/");
@@ -106,7 +109,18 @@ export default function Login() {
           </Form.Item>
         </Form>
         <Form.Item>
-          <Checkbox>Remember me</Checkbox>
+          <Controller
+            name="remember"
+            control={form.control}
+            render={({ value, onChange }) => (
+              <Checkbox
+                checked={value}
+                onChange={(e) => onChange(e.target.checked)}
+              >
+                Remember me
+              </Checkbox>
+            )}
+          />
         </Form.Item>
         <Space>
           <Button

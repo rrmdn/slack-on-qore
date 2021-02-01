@@ -109,14 +109,26 @@
           "displayField": false
         },
         {
-          "name": "Member last read 1",
+          "name": "Last read channel",
           "type": "relation",
           "deletionProtection": false,
           "defaultValue": null,
-          "id": "memberLastRead1",
+          "id": "lastReadChannel",
           "table": "memberLastRead",
-          "column": "channel",
+          "column": "lastReadChannel",
           "multiple": true,
+          "displayField": false
+        },
+        {
+          "name": "Unread messages",
+          "type": "rollup",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "unreadMessages",
+          "source": "messages",
+          "destinations": ["id"],
+          "aggregate": "count",
+          "condition": null,
           "displayField": false
         }
       ]
@@ -192,22 +204,22 @@
           "displayField": false
         },
         {
-          "name": "channel",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "channel",
-          "table": "channel",
-          "column": "memberLastRead1",
-          "multiple": false,
-          "displayField": false
-        },
-        {
           "name": "last read at",
           "type": "date",
           "deletionProtection": false,
           "defaultValue": null,
           "id": "lastReadAt",
+          "displayField": false
+        },
+        {
+          "name": "channel 2",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "lastReadChannel",
+          "table": "channel",
+          "column": "lastReadChannel",
+          "multiple": true,
           "displayField": false
         }
       ]
@@ -246,13 +258,6 @@
           "select": true,
           "update": false,
           "delete": false,
-          "viewId": "channelsExcludingMember"
-        },
-        {
-          "insert": false,
-          "select": true,
-          "update": false,
-          "delete": false,
           "viewId": "privateChannels"
         },
         {
@@ -282,13 +287,6 @@
           "update": false,
           "delete": false,
           "viewId": "memberLastReadDefaultView"
-        },
-        {
-          "insert": false,
-          "select": true,
-          "update": false,
-          "delete": false,
-          "viewId": "lastReadChannel"
         },
         {
           "insert": true,
@@ -322,32 +320,6 @@
     }
   ],
   "forms": [
-    {
-      "name": "new form Jwg1",
-      "id": "newFormJwg1",
-      "tableId": "member",
-      "fields": [
-        { "id": "email" },
-        { "id": "role" },
-        { "id": "password" },
-        { "id": "messages1" },
-        { "id": "channels" },
-        { "id": "memberLastRead" }
-      ]
-    },
-    {
-      "name": "dfgdfgfdgdfg",
-      "id": "dfgdfgfdgdfg",
-      "tableId": "member",
-      "fields": [
-        { "id": "email" },
-        { "id": "role" },
-        { "id": "password" },
-        { "id": "messages1" },
-        { "id": "channels" },
-        { "id": "memberLastRead" }
-      ]
-    },
     {
       "name": "Register Form",
       "id": "registerForm",
@@ -571,23 +543,23 @@
           "design": null
         },
         {
-          "name": "channel",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "channel",
-          "table": "channel",
-          "column": "memberLastRead1",
-          "multiple": false,
-          "displayField": false,
-          "design": null
-        },
-        {
           "name": "last read at",
           "type": "date",
           "deletionProtection": false,
           "defaultValue": null,
           "id": "lastReadAt",
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "channel 2",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "lastReadChannel",
+          "table": "channel",
+          "column": "lastReadChannel",
+          "multiple": true,
           "displayField": false,
           "design": null
         }
@@ -668,18 +640,6 @@
           "design": null
         },
         {
-          "name": "channel",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "channel",
-          "table": "channel",
-          "column": "memberLastRead1",
-          "multiple": false,
-          "displayField": false,
-          "design": null
-        },
-        {
           "name": "last read at",
           "type": "date",
           "deletionProtection": false,
@@ -691,71 +651,6 @@
       ],
       "design": null,
       "filter": "member.id = $user.data.id"
-    },
-    {
-      "id": "lastReadChannel",
-      "name": "Last read channel",
-      "tableId": "channel",
-      "parameters": [],
-      "sorts": [],
-      "fields": [
-        {
-          "name": "name",
-          "type": "text",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "name",
-          "displayField": true,
-          "design": null
-        },
-        {
-          "name": "Messages",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "messages",
-          "table": "messages",
-          "column": "channel",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "member 1",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "member1",
-          "table": "member",
-          "column": "channels",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "type",
-          "type": "select",
-          "deletionProtection": false,
-          "defaultValue": "channel",
-          "id": "type",
-          "select": ["channel", "private"],
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "Member last read 1",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "memberLastRead1",
-          "table": "memberLastRead",
-          "column": "channel",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        }
-      ],
-      "design": null
     },
     {
       "id": "publicMembers",
@@ -831,148 +726,10 @@
       "filter": "email.startsWith($params.search)"
     },
     {
-      "id": "privateChannels",
-      "name": "Private channels",
-      "tableId": "channel",
-      "parameters": [
-        { "slug": "memberID", "type": "text", "required": false },
-        { "slug": "search", "type": "text", "required": false }
-      ],
-      "sorts": [],
-      "fields": [
-        {
-          "name": "name",
-          "type": "text",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "name",
-          "displayField": true,
-          "design": null
-        },
-        {
-          "name": "Messages",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "messages",
-          "table": "messages",
-          "column": "channel",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "member 1",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "member1",
-          "table": "member",
-          "column": "channels",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "type",
-          "type": "select",
-          "deletionProtection": false,
-          "defaultValue": "channel",
-          "id": "type",
-          "select": ["channel", "private"],
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "Member last read 1",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "memberLastRead1",
-          "table": "memberLastRead",
-          "column": "channel",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        }
-      ],
-      "design": null,
-      "filter": "((member1.id = $param.memberID) AND member1.email.startsWith($param.search)) AND (type = 'private')"
-    },
-    {
-      "id": "channelsExcludingMember",
-      "name": "Channels excluding member",
-      "tableId": "channel",
-      "parameters": [{ "slug": "memberID", "type": "text", "required": false }],
-      "sorts": [],
-      "fields": [
-        {
-          "name": "name",
-          "type": "text",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "name",
-          "displayField": true,
-          "design": null
-        },
-        {
-          "name": "Messages",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "messages",
-          "table": "messages",
-          "column": "channel",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "member 1",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "member1",
-          "table": "member",
-          "column": "channels",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "type",
-          "type": "select",
-          "deletionProtection": false,
-          "defaultValue": "channel",
-          "id": "type",
-          "select": ["channel", "private"],
-          "displayField": false,
-          "design": null
-        },
-        {
-          "name": "Member last read 1",
-          "type": "relation",
-          "deletionProtection": false,
-          "defaultValue": null,
-          "id": "memberLastRead1",
-          "table": "memberLastRead",
-          "column": "channel",
-          "multiple": true,
-          "displayField": false,
-          "design": null
-        }
-      ],
-      "design": null,
-      "filter": "(member1.id != $param.memberID) AND (type = 'channel')"
-    },
-    {
       "id": "myChannels",
       "name": "My channels",
       "tableId": "channel",
-      "parameters": [
-        { "slug": "memberID", "type": "text", "required": false },
-        { "slug": "search", "type": "text", "required": false }
-      ],
+      "parameters": [{ "slug": "search", "type": "text", "required": false }],
       "sorts": [],
       "fields": [
         {
@@ -1019,20 +776,33 @@
           "design": null
         },
         {
-          "name": "Member last read 1",
+          "name": "Last read channel",
           "type": "relation",
           "deletionProtection": false,
           "defaultValue": null,
-          "id": "memberLastRead1",
+          "id": "lastReadChannel",
           "table": "memberLastRead",
-          "column": "channel",
+          "column": "lastReadChannel",
           "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "Unread messages",
+          "type": "rollup",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "unreadMessages",
+          "source": "messages",
+          "destinations": ["id"],
+          "aggregate": "count",
+          "condition": null,
           "displayField": false,
           "design": null
         }
       ],
       "design": null,
-      "filter": "((member1.id = $param.memberID) AND name.startsWith($param.search)) AND (type = 'channel')"
+      "filter": "((member1.id = $user.data.id) AND name.startsWith($param.search)) AND (type = 'channel')"
     },
     {
       "id": "memberDefaultView",
@@ -1094,6 +864,60 @@
       ],
       "design": null,
       "filter": "email.startsWith($param.search)"
+    },
+    {
+      "id": "privateChannels",
+      "name": "Private channels",
+      "tableId": "channel",
+      "parameters": [{ "slug": "search", "type": "text", "required": false }],
+      "sorts": [],
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "name",
+          "displayField": true,
+          "design": null
+        },
+        {
+          "name": "Messages",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "messages",
+          "table": "messages",
+          "column": "channel",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "member 1",
+          "type": "relation",
+          "deletionProtection": false,
+          "defaultValue": null,
+          "id": "member1",
+          "table": "member",
+          "column": "channels",
+          "multiple": true,
+          "displayField": false,
+          "design": null
+        },
+        {
+          "name": "type",
+          "type": "select",
+          "deletionProtection": false,
+          "defaultValue": "channel",
+          "id": "type",
+          "select": ["channel", "private"],
+          "displayField": false,
+          "design": null
+        }
+      ],
+      "design": null,
+      "filter": "((member1.id = $user.data.id) AND member1.email.startsWith($param.search)) AND (type = 'private')"
     }
   ]
 }
