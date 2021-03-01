@@ -41,13 +41,44 @@ const useCurrentUser = () => {
 
 const ChannelMessages = (props: { id: string }) => {
   const channel = qoreContext.view("channelDefaultView").useGetRow(props.id);
-  const channelMessages = qoreContext.view("channelMessages").useListRow(
+  const channelMessages = qoreContext.view("channelMessages").useListRow({
+    channelID: props.id,
+    "$by.createdAt": "desc",
+    offset: 0,
+    limit: 10,
+  });
+  const latestTimestamp = React.useMemo(() => {
+    const latestMessage = channelMessages.data[channelMessages.data.length];
+    return dayjs(latestMessage?.createdAt).toISOString();
+  }, [channelMessages.data]);
+  const latestChannelMessages = qoreContext.view("channelMessages").useListRow(
     {
       channelID: props.id,
       "$by.createdAt": "desc",
+      after: latestTimestamp,
     },
-    { pollInterval: 5000 }
+    {
+      pollInterval: 5000,
+    }
   );
+  React.useEffect(() => {
+    if (latestChannelMessages.data.length) {
+      channelMessages.revalidate({
+        networkPolicy: "cache-only",
+        optimisticResponse: {
+          nodes: [...latestChannelMessages.data, ...channelMessages.data],
+        },
+      });
+    }
+  }, [latestChannelMessages.data]);
+  const handleLoadMore = React.useCallback(() => {
+    channelMessages.fetchMore({
+      channelID: props.id,
+      "$by.createdAt": "desc",
+      offset: channelMessages.data.length,
+      limit: 10,
+    });
+  }, [channelMessages.data, props.id]);
   const currentUser = useCurrentUser();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [state, setState] = React.useState<{ image?: string }>({});
@@ -69,7 +100,6 @@ const ChannelMessages = (props: { id: string }) => {
     await sendMessage
       .action("sendMessage")
       .trigger({ message, attachment: state.image });
-    channelMessages.revalidate();
   }, [currentUser?.id, props.id, state]);
   const handleUpload = React.useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,6 +233,13 @@ const ChannelMessages = (props: { id: string }) => {
             </div>
           );
         })}
+        <Button
+          type="link"
+          onClick={handleLoadMore}
+          disabled={channelMessages.status === "loading"}
+        >
+          Load more
+        </Button>
       </div>
       <div
         className={css`
