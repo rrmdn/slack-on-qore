@@ -292,10 +292,10 @@ export default function Home() {
     search: state.search,
     limit: currentUser?.id ? undefined : 0, // skip fetching
   });
-  const privateChannels = qoreContext.view("privateChannels").useListRow({
-    search: state.search,
-    limit: currentUser?.id ? undefined : 0, // skip fetching
-  });
+  // const privateChannels = qoreContext.view("privateChannels").useListRow({
+  //   search: state.search,
+  //   limit: currentUser?.id ? undefined : 0, // skip fetching
+  // });
   const publicMembers = qoreContext.view("publicMembers").useListRow({
     search: state.search,
     limit: !!state.search ? 5 : 0,
@@ -434,7 +434,7 @@ export default function Home() {
                 </Menu.Item>
               ))}
             </Menu.SubMenu>
-            <Menu.SubMenu key="privateMessages" title="Private Messages">
+            {/* <Menu.SubMenu key="privateMessages" title="Private Messages">
               {privateChannels.data
                 .filter((channel) => channel.hasCurrentUser)
                 .map((channel) => (
@@ -446,7 +446,7 @@ export default function Home() {
                     }
                   </Menu.Item>
                 ))}
-            </Menu.SubMenu>
+            </Menu.SubMenu> */}
           </Menu>
         </div>
         <div
