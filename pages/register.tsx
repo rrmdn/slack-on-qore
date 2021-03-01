@@ -1,7 +1,7 @@
 import React from "react";
 import { css } from "@emotion/css";
 import { KeyOutlined, MailOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Input, message, Space, Typography } from "antd";
+import { Button, Card, Col, Form, Input, message, Row, Space, Typography } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -45,18 +45,30 @@ export default function Register() {
         bottom: 0;
         left: 0;
         right: 0;
+        padding: 100px 20px;
         justify-content: center;
-        align-items: center;
-        background: rgba(98, 35, 41, 1);
-        background: linear-gradient(
-          327deg,
-          rgba(0, 0, 0, 1) 0%,
-          rgba(43, 21, 21, 1) 34%,
-          rgba(98, 35, 41, 1) 68%,
-          rgba(223, 69, 85, 1) 100%
-        );
+        align-items: flex-start;
+        background: #f9f9fa;
       `}
     >
+      <Row
+        className={css`
+          height: 240px;
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          background: #003688;
+        `}
+      >
+        <Col>
+          <img src="/pencil-man.png" />
+        </Col>
+        <Col flex={1}></Col>
+        <Col>
+          <img src="/austronot-woman.png" />
+        </Col>
+      </Row>
       <Card
         className={css`
           width: 420px;

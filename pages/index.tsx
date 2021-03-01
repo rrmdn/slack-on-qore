@@ -97,6 +97,7 @@ const ChannelMessages = (props: { id: string }) => {
         position: relative;
         width: 100%;
         height: 100%;
+        background: url("/bg-chat.svg") no-repeat center;
       `}
     >
       <div
@@ -104,6 +105,7 @@ const ChannelMessages = (props: { id: string }) => {
           padding: 16px;
           border-bottom: 1px solid rgba(0, 0, 0, 0.1);
           height: 56px;
+          background: white;
         `}
       >
         <Typography.Title level={4}>{channel.data.name}</Typography.Title>
@@ -172,7 +174,7 @@ const ChannelMessages = (props: { id: string }) => {
                     background-color: #dcdcdc;
                     ${isSelf &&
                     css`
-                      background-color: #5c5c5c;
+                      background-color: #003688;
                       span {
                         color: #fff !important;
                       }
@@ -318,7 +320,7 @@ export default function Home() {
         right: 0;
         top: 0;
         bottom: 0;
-        background-color: #f3f3f3;
+        background-color: #f9f9fa;
       `}
     >
       <div
@@ -331,7 +333,7 @@ export default function Home() {
           className={css`
             overflow-y: auto;
             height: 100%;
-            background-color: #2b1515;
+            background-color: #003688;
             width: 280px;
           `}
         >
@@ -348,6 +350,14 @@ export default function Home() {
             />
           </div>
           <Menu
+            className={css`
+              .ant-menu-item {
+                color: #99c1ff !important;
+              }
+              .ant-menu-item-selected {
+                color: #003688 !important;
+              }
+            `}
             mode="inline"
             defaultOpenKeys={["channels", "privateMessages"]}
             activeKey={state.activeKey}

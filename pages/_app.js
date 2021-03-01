@@ -6,10 +6,11 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&display=swap"
-        />
+        ></link>
       </Head>
       <Component {...pageProps} />
     </>

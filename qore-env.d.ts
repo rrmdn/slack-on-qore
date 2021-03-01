@@ -4,6 +4,15 @@
 import { QoreSchema } from "@feedloop/qore-client";
 
 declare module "@feedloop/qore-client" {
+  type MemberLastReadTableRow = {
+    id: string;
+    member: MemberTableRow;
+    lastReadAt: Date;
+    upload: string;
+    angka: number;
+    formulaPlus: number;
+  };
+
   type MemberTableRow = {
     id: string;
     email: string;
@@ -21,6 +30,7 @@ declare module "@feedloop/qore-client" {
     member1: { nodes: Member1TableRow[] };
     type: "channel" | "private";
     hasCurrentUser: number;
+    totalMember: number;
   };
 
   type MessagesTableRow = {
@@ -30,12 +40,6 @@ declare module "@feedloop/qore-client" {
     channel: ChannelTableRow;
     from: FromTableRow;
     createdAt: Date;
-  };
-
-  type MemberLastReadTableRow = {
-    id: string;
-    member: MemberTableRow;
-    lastReadAt: Date;
   };
 
   type MessagesDefaultViewViewRow = {
@@ -54,8 +58,11 @@ declare module "@feedloop/qore-client" {
       from: string[];
       createdAt: Date;
     };
-    params: {};
+    params: {
+      "$by.createdAt"?: "desc";
+    };
     actions: {};
+    forms: {};
   };
 
   type CurrentMemberViewRow = {
@@ -75,6 +82,13 @@ declare module "@feedloop/qore-client" {
     };
     params: {};
     actions: {};
+    forms: {
+      registerForm: {
+        role?: string;
+        password: string;
+        email: string;
+      };
+    };
   };
 
   type MemberLastReadDefaultViewViewRow = {
@@ -82,13 +96,19 @@ declare module "@feedloop/qore-client" {
       id: string;
       member: MemberTableRow;
       lastReadAt: Date;
+      upload: string;
+      angka: number;
+      formulaPlus: number;
     };
     write: {
       member: string[];
       lastReadAt: Date;
+      upload: string;
+      angka: number;
     };
     params: {};
     actions: {};
+    forms: {};
   };
 
   type ChannelDefaultViewViewRow = {
@@ -99,6 +119,7 @@ declare module "@feedloop/qore-client" {
       member1: { nodes: Member1TableRow[] };
       type: "channel" | "private";
       hasCurrentUser: number;
+      totalMember: number;
     };
     write: {
       name: string;
@@ -109,13 +130,8 @@ declare module "@feedloop/qore-client" {
     params: {
       search?: string;
     };
-    actions: {
-      sendMessage: {
-        message?: string;
-        attachment?: string;
-      };
-      join: {};
-    };
+    actions: { join: {} };
+    forms: {};
   };
 
   type CurrentMemberLastReadViewRow = {
@@ -130,6 +146,7 @@ declare module "@feedloop/qore-client" {
     };
     params: {};
     actions: {};
+    forms: {};
   };
 
   type PublicMembersViewRow = {
@@ -153,6 +170,13 @@ declare module "@feedloop/qore-client" {
       search?: string;
     };
     actions: {};
+    forms: {
+      registerForm: {
+        role?: string;
+        password: string;
+        email: string;
+      };
+    };
   };
 
   type JoinedChannelsViewRow = {
@@ -179,6 +203,7 @@ declare module "@feedloop/qore-client" {
         attachment?: string;
       };
     };
+    forms: {};
   };
 
   type MemberDefaultViewViewRow = {
@@ -200,6 +225,13 @@ declare module "@feedloop/qore-client" {
       search?: string;
     };
     actions: {};
+    forms: {
+      registerForm: {
+        role?: string;
+        password: string;
+        email: string;
+      };
+    };
   };
 
   type ChannelMessagesViewRow = {
@@ -224,6 +256,7 @@ declare module "@feedloop/qore-client" {
       "$by.createdAt"?: "desc";
     };
     actions: {};
+    forms: {};
   };
 
   type PrivateChannelsViewRow = {
@@ -250,6 +283,7 @@ declare module "@feedloop/qore-client" {
         attachment?: string;
       };
     };
+    forms: {};
   };
 
   type ProjectSchema = {
